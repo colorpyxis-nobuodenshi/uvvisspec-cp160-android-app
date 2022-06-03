@@ -446,10 +446,15 @@ class SpectralLineChart extends StatelessWidget {
         ),
         
         behaviors: [
+          charts.ChartTitle('nm',
+            titleStyleSpec: const charts.TextStyleSpec(color: charts.MaterialPalette.white, fontSize: 15),
+            innerPadding: 0,
+            behaviorPosition: charts.BehaviorPosition.bottom,
+            titleOutsideJustification: charts.OutsideJustification.end),
           charts.RangeAnnotation([
             // charts.RangeAnnotationSegment(310, sumRangeMin, charts.RangeAnnotationAxisType.domain, color: charts.ColorUtil.fromDartColor(Colors.white10)),
             // charts.RangeAnnotationSegment(sumRangeMax, 800, charts.RangeAnnotationAxisType.domain, color: charts.ColorUtil.fromDartColor(Colors.white10)),
-            charts.RangeAnnotationSegment(sumRangeMin, sumRangeMax, charts.RangeAnnotationAxisType.domain, color: charts.ColorUtil.fromDartColor(Colors.black12)),
+            charts.RangeAnnotationSegment(sumRangeMin, sumRangeMax, charts.RangeAnnotationAxisType.domain, color: charts.ColorUtil.fromDartColor(Colors.black12),startLabel: sumRangeMin.toInt().toString() + "", endLabel: sumRangeMax.toInt().toString() + "", labelStyleSpec: const charts.TextStyleSpec(color: charts.MaterialPalette.white),labelDirection: charts.AnnotationLabelDirection.horizontal),
             // charts.LineAnnotationSegment(
             // sumRangeMin, charts.RangeAnnotationAxisType.domain,
             // color: charts.ColorUtil.fromDartColor(Colors.black12), strokeWidthPx: 3),
@@ -457,7 +462,7 @@ class SpectralLineChart extends StatelessWidget {
             // sumRangeMax, charts.RangeAnnotationAxisType.domain,
             // color: charts.ColorUtil.fromDartColor(Colors.black12), strokeWidthPx: 3),
             ]),
-              ],
+          ]
           );
   }
 }

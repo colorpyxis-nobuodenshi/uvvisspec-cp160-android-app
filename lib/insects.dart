@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/services.dart' show rootBundle;
 import 'uvvisspec.dart';
 
-enum InsectsSpectralIntensityType { Azamiuma, Hachi, GaA, GaB, GaC, None }
+enum InsectsSpectralIntensityType { Azamiuma, Hachi, GaA, GaB, GaC, ChlorA, ChlorB, Y, None }
 
 Map<InsectsSpectralIntensityType, String> insectNameMap = {
   InsectsSpectralIntensityType.Azamiuma: "thrips",
@@ -12,6 +12,9 @@ Map<InsectsSpectralIntensityType, String> insectNameMap = {
   InsectsSpectralIntensityType.GaB: "moth(550)",
   InsectsSpectralIntensityType.GaC: "moth(350+550)",
   InsectsSpectralIntensityType.None: "none",
+  InsectsSpectralIntensityType.ChlorA: "chloropyll a",
+  InsectsSpectralIntensityType.ChlorB: "chloropyll b",
+  InsectsSpectralIntensityType.Y: "illuminance",
   };
 
 class InsectsSpecResult {
