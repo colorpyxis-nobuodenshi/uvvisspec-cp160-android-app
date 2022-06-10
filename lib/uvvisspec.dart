@@ -390,80 +390,66 @@ class UvVisSpecDevice {
     var wl2 = List.generate(len, (index) => (index + wlMin).toDouble());
     var sp2 = List.generate(len, (index) => 0.0);
     //var sp3 = List.generate(len, (index) => 0.0);
+    //var z = _makeSplineTable(wl, sp);
     for(var i=0;i<len;i++)
     {
-      sp2[i] = _interporateLagrange(wl2[i], wl, sp);
+      sp2[i] = _interporateLinear(wl2[i], wl, sp);
+      //sp2[i] = _interporateSpline(wl2[i], wl, sp, z);
+      //sp2[i] = _interporateLagrange(wl2[i], wl, sp);
       if(sp2[i] < 0.0)
       {
         sp2[i] = 0.0;
       }
     }
 
-    // for(var i=2;i<len-2;i++)
-    // {
-    //   sp3[i] = (-3.0 * sp2[i-2] + 12.0 * sp2[i-1] + 17.0 * sp2[i] + 12.0 * sp2[i+1] -3.0 * sp2[i+2]) / 35.0;
-    //   if(sp3[i] < 0)
-    //   {
-    //     sp3[i] = 0.0;
-    //   }
-    // }
-    // sp3[0] = sp3[2];
-    // sp3[1] = sp3[2];
-    // sp3[len-1] = sp3[len-3];
-    // sp3[len-2] = sp3[len-3];
-
     return [wl2, sp2];
   }
 
-  double _interporateSpline(double v, List<double> src1, List<double> src2)
+  List<double> _makeSplineTable(List<double> x, List<double> y) {
+		var n = x.length;
+    var h = List.generate(n, (index) => 0.0);
+		var d = List.generate(n, (index) => 0.0);
+    var z = List.generate(n, (index) => 0.0);
+		
+		z[0]=0; z[n-1]=0;
+		for(int i = 0; i<n-1; i++) {
+			h[i] =  x[i+1]-x[i];
+			d[i+1] = (y[i+1]-y[i])/h[i];
+		}
+		z[1] = d[2]-d[1]-h[0]*z[0];
+		d[1] = 2*(x[2]-x[0]);
+		for(int i=1; i<n-2; i++){
+			double t = h[i]/d[i];
+			z[i+1] = d[i+2]-d[i+1]-z[i]*t;
+			d[i+1] = 2*(x[i+2]-x[i])-h[i]*t;
+		}
+		z[n-2] -= h[n-2]*z[n-1];
+		for(int i=n-2; i>0; i--){
+			z[i] = (z[i]-h[i]*z[i+1])/d[i];
+		}
+    return z;
+	}
+  double _interporateSpline(double t, List<double> x, List<double> y, List<double> z)
   {
-    var y = src2;
-    var x = src1;
-    var n = x.length;
+    int i, j, k;
+		double d, h;
+    var n = z.length;
 
-    var h = List.generate(n, (idx) => 0.0);
-    var diff1 = List.generate(n, (idx) => 0.0);
-    var diff2 = List.generate(n, (idx) => 0.0);
-
-    if(x[0] == v)
-    {
-      return y[0];
-    }
-    if(x[n-1] == v)
-    {
-      return y[n-1];
-    }
-    for(var i=1;i<n;i++)
-    {
-      h[i] = x[i] - x[i-1];
-      diff1[i] = h[i] == 0.0 ? 0.0 : (y[i] - y[i-1]) / h[i];
-    }
-    for(var i=1;i<n-1;i++)
-    {
-      diff2[i] = (diff1[i+1] - diff1[i]) / (x[i+1] - x[i-1]);
-    }
-    
-    var t = 1;
-    for(var i=1;i<n;i++)
-    {
-      t = i;
-      if(v < x[i])
-      {
-        break;
-      }
-    }
-    
-    var yy0 = diff2[t-1]/(6.0*h[t])*(x[t]-v)*(x[t]-v)*(x[t]-v);
-    var yy1 = diff2[t]/(6.0*h[t])*(v-x[t-1])*(v-x[t-1])*(v-x[t-1]);
-    var yy2 = (y[t-1]/h[t]-h[t]*diff2[t-1]/6.0)*(x[t]-v);
-    var yy3 = (y[t]/h[t]-h[t]*diff2[t]/6.0)*(v-x[t-1]);
-    var yy = yy0 + yy1 + yy2 + yy3;
-    if(yy < 0.0)
-    {
-      yy = 0.0;
-    }
-    return yy;
+		i = 0; j = n-1;
+		while (i<j){
+			k = (i+j)~/2;
+			if(x[k] < t) {
+			  i = k + 1;
+			} else {
+			  j = k;
+			}
+		}
+		if (i>0) i--;
+		h = x[i+1]-x[i];
+    d = t-x[i];
+		return (((z[i+1] - z[i]) * d / h + z[i] * 3) * d + ((y[i+ 1] - y[i]) / h - (z[i] * 2 + z[i+1]) * h)) * d + y[i];
   }
+
   double _interporateLinear(double v, List<double> src1, List<double> src2)
   {
       var x1 = 0.0;
@@ -506,7 +492,7 @@ class UvVisSpecDevice {
   {
       var t1 = 1;
       var n = 2;
-      for(var i=1;i<v1.length-2;i++)
+      for(var i=2;i<v1.length-1;i++)
       {
         t1 = i;
         if(v1[i] > x)
@@ -516,8 +502,8 @@ class UvVisSpecDevice {
           
       }
       
-      var xx = [v1[t1-1],v1[t1],v1[t1+1],v1[t1+2]];
-      var yy = [v2[t1-1],v2[t1],v2[t1+1],v2[t1+2]];
+      var xx = [v1[t1-2],v1[t1-1],v1[t1],v1[t1+1]];
+      var yy = [v2[t1-2],v2[t1-1],v2[t1],v2[t1+1]];
       var p = 0.0;
       var s = 0.0;
       var n2 = xx.length;
@@ -527,7 +513,7 @@ class UvVisSpecDevice {
         for(var i=0;i<n2;i++)
         {
           if(i==j) continue;
-          p *= (xx[j] - xx[i]) == 0.0 ? 0.0 : (x - xx[i])/(xx[j] - xx[i]); 
+          if((xx[j] - xx[i]) != 0.0) p *= (x - xx[i])/(xx[j] - xx[i]); 
         }
         s += p;
       }

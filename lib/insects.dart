@@ -1,19 +1,18 @@
 import 'dart:collection';
 import 'dart:math';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:uvvisspec_insects_app/settings.dart';
 import 'uvvisspec.dart';
 
-enum InsectsSpectralIntensityType { Azamiuma, Hachi, GaA, GaB, GaC, ChlorA, ChlorB, Y, None }
+enum InsectsSpectralIntensityType { Azamiuma, Hachi, Ga350, Ga550, Ga350550, Y, None }
 
 Map<InsectsSpectralIntensityType, String> insectNameMap = {
   InsectsSpectralIntensityType.Azamiuma: "thrips",
   InsectsSpectralIntensityType.Hachi: "bee",
-  InsectsSpectralIntensityType.GaA: "moth(350)",
-  InsectsSpectralIntensityType.GaB: "moth(550)",
-  InsectsSpectralIntensityType.GaC: "moth(350+550)",
+  InsectsSpectralIntensityType.Ga350: "moth(350)",
+  InsectsSpectralIntensityType.Ga550: "moth(550)",
+  InsectsSpectralIntensityType.Ga350550: "moth(350+550)",
   InsectsSpectralIntensityType.None: "none",
-  InsectsSpectralIntensityType.ChlorA: "chloropyll a",
-  InsectsSpectralIntensityType.ChlorB: "chloropyll b",
   InsectsSpectralIntensityType.Y: "illuminance",
   };
 
@@ -42,6 +41,8 @@ class Settings {
   double sumRangeMin = 310;
   double sumRangeMax = 800;
   String deviceExposureTime = "AUTO";
+  MeasureMode measureMode = MeasureMode.insectsIrradiance;
+  IntegrateLigthIntensityRange integrateLigthIntensityRange = IntegrateLigthIntensityRange.all;
 }
 
 class UVVisSpecResultConverterForInsects {
@@ -61,7 +62,8 @@ class UVVisSpecResultConverterForInsects {
     var isil3 = <double>[];
     var isil4 = <double>[];
     var isil5 = <double>[];
-    
+    var isil6 = <double>[];
+
     var lines = loadedData.split('\n');
     for(var i=1;i<lines.length;i++){
       //debugPrint('${lines[i]}');
@@ -71,14 +73,16 @@ class UVVisSpecResultConverterForInsects {
       isil3.add(double.parse(v[3]));
       isil4.add(double.parse(v[4]));
       isil5.add(double.parse(v[5]));
+      isil6.add(double.parse(v[6]));
     }
     var map = HashMap<InsectsSpectralIntensityType, List<double>>();
     map[InsectsSpectralIntensityType.Azamiuma] = isil1;
     map[InsectsSpectralIntensityType.Hachi] = isil2;
-    map[InsectsSpectralIntensityType.GaA] = isil3;
-    map[InsectsSpectralIntensityType.GaB] = isil4;
-    map[InsectsSpectralIntensityType.GaC] = isil5;
-    
+    map[InsectsSpectralIntensityType.Ga350] = isil3;
+    map[InsectsSpectralIntensityType.Ga550] = isil4;
+    map[InsectsSpectralIntensityType.Ga350550] = isil5;
+    map[InsectsSpectralIntensityType.Y] = isil6;
+
     return map;
   }
 

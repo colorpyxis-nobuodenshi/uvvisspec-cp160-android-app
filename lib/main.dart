@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:uvvisspec_insects_app/plants.dart';
 import 'uvvisspec.dart';
 import 'settings.dart';
 import 'result_storage.dart';
@@ -38,11 +40,19 @@ class HomeState extends State<Home> {
   final ResultStorage storage = ResultStorage();
   final UvVisSpecDevice device = UvVisSpecDevice();
   final UVVisSpecResultConverterForInsects resultConverter = UVVisSpecResultConverterForInsects();
+  //final UVVisSpecResultConverterForPlants resultConverter2 = UVVisSpecResultConverterForPlants();
 
   var _peekPower = 0.0;
   var _peekWavelength = 0.0;
   var _irradiance = 0.0;
   var _unit = "W/m2";
+
+  // var _ppfd = 0.0;
+  // var _pfdUv = 0.0;
+  // var _pfdB = 0.0;
+  // var _pfdG = 0.0;
+  // var _pfdR = 0.0;
+  // var _pfdIr = 0.0;
 
   late List<double> _spectralData = List.generate(50, (index) => 1.0);
   late List<double> _spectralWl = List.generate(50, (index) => 0.0);
@@ -51,6 +61,7 @@ class HomeState extends State<Home> {
   var _showWarning = true;
   var _measuring = false;
   var _connected = false;
+  
 
   @override
   void initState() {
@@ -96,15 +107,26 @@ class HomeState extends State<Home> {
       var pp1 = _currentResult.pp;
       var ir1 = _currentResult.ir;
       var pwl1 = _currentResult.pwl;
+      var vmax = p1.reduce(max);
       for(var i=0;i<p1.length;i++) {
-        p1[i] /= pp1;
+        p1[i] /= vmax;
       }
+
+      //var r = await resultConverter2.convert(event);
+
       setState(() {
         _spectralData = p1;
         _spectralWl = wl1;
         _irradiance = ir1;
         _peekWavelength = pwl1;  
         _peekPower = pp1;
+
+        // _ppfd = r.ppfd;
+        // _pfdUv = r.pfdUv;
+        // _pfdB = r.pfdB;
+        // _pfdG = r.pfdG;
+        // _pfdR = r.pfdR;
+        // _pfdIr = r.pfdIr;
       });
     });
 
@@ -127,6 +149,352 @@ class HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    var integratedLightIntensityLabel = "放射照度";
+    switch(_settings.unit)
+    {
+      case Unit.w:
+        integratedLightIntensityLabel = "放射照度";
+        break;
+      case Unit.photon:
+      case Unit.mol:
+        integratedLightIntensityLabel = "光量子束密度";
+        break;
+    }
+    if(_settings.sumRangeMin == 310 && _settings.sumRangeMax == 800)
+    {
+
+    }
+    else if(_settings.sumRangeMin == 310 && _settings.sumRangeMax == 400)
+    {
+      integratedLightIntensityLabel += " (UV 310 - 400 nm)";
+    }
+    else if(_settings.sumRangeMin == 400 && _settings.sumRangeMax == 500)
+    {
+      integratedLightIntensityLabel += " (B 400 - 500 nm)";
+    }
+    else if(_settings.sumRangeMin == 500 && _settings.sumRangeMax == 600)
+    {
+      integratedLightIntensityLabel += " (G 500 - 600 nm)";
+    }
+    else if(_settings.sumRangeMin == 600 && _settings.sumRangeMax == 700)
+    {
+      integratedLightIntensityLabel += " (R 600 - 700 nm)";
+    }
+    else if(_settings.sumRangeMin == 700 && _settings.sumRangeMax == 800)
+    {
+      integratedLightIntensityLabel += " (FR 700 - 800 nm)";
+    }
+    else if(_settings.sumRangeMin == 400 && _settings.sumRangeMax == 700)
+    {
+      integratedLightIntensityLabel += " (400 - 700 nm)";
+    }
+    else
+    {
+      integratedLightIntensityLabel += " (" + _settings.sumRangeMin.toInt().toString() + " - " + _settings.sumRangeMax.toInt().toString() + " nm)";
+    }
+    var contents = Container();
+    contents = Container(
+        child: Column(children:<Widget>[
+        SizedBox(
+          width: 700,
+          height: 250,
+          child: Card(
+            child: SpectralLineChart.create(_spectralWl, _spectralData, _settings.sumRangeMin, _settings.sumRangeMax),
+            ) 
+          ),
+          SizedBox(
+          height: 100,
+          width: 700,
+          child: Card(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(integratedLightIntensityLabel,
+                    style: const TextStyle(fontSize: 18),
+                    ),
+                  Text(_irradiance.toStringAsExponential(3), 
+                        style:  TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 36,
+                          color: Colors.blue.shade600,
+                          ),
+                      ),
+                  Text(_unit, style: const TextStyle(fontSize: 18)),
+                ],
+              ),
+            ),
+          ),
+          
+          SizedBox(
+          height: 95,
+          width: 700,
+          child: Card(
+              child: Column(
+                children: <Widget>[
+                  const Text("ピーク光強度", 
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                    ),
+                  Text(_peekPower.toStringAsExponential(3), 
+                        style:  TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28,
+                          color: Colors.blue.shade600,
+                          ),
+                      ),
+                  Text(_unit+"/nm", style: const TextStyle(fontSize: 18)),
+                  
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+          height: 95,
+          width: 700,
+          child: Card(
+              child: Column(
+                children: <Widget>[
+                  const Text("ピーク波長", 
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                    ),
+                  Text(_peekWavelength.toStringAsFixed(0), 
+                        style:  TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28,
+                          color: Colors.blue.shade600,
+                          ),
+                      ),
+                  const Text("nm", style: TextStyle(fontSize: 18)),
+                  
+                ],
+              ),
+            ),
+          ),
+          ],
+        ),
+      );
+    // if(_settings.measureMode == MeasureMode.insectsIrradiance)
+    // {
+    //   contents = Container(
+    //     child: Column(children:<Widget>[
+    //     SizedBox(
+    //       width: 700,
+    //       height: 240,
+    //       child: Card(
+    //         //color: Colors.white12,
+    //         child: SpectralLineChart.create(_spectralWl, _spectralData, _settings.sumRangeMin, _settings.sumRangeMax),) 
+    //     ),
+    //       SizedBox(
+    //       height: 100,
+    //       width: 700,
+    //       child: Card(
+    //           child: Column(
+    //             children: <Widget>[
+    //               const Text("ピーク光強度", 
+    //                 style: TextStyle(
+    //                   fontSize: 18,
+    //                 ),
+    //                 ),
+    //               Text(_peekPower.toStringAsExponential(3), 
+    //                     style:  TextStyle(
+    //                       fontWeight: FontWeight.bold,
+    //                       fontSize: 36,
+    //                       color: Colors.blue.shade600,
+    //                       ),
+    //                   ),
+    //               Text(_unit+"/nm", style: const TextStyle(fontSize: 18)),
+                  
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //       SizedBox(
+    //       height: 100,
+    //       width: 700,
+    //       child: Card(
+    //           child: Column(
+    //             children: <Widget>[
+    //               const Text("ピーク波長", 
+    //                 style: TextStyle(
+    //                   fontSize: 18,
+    //                 ),
+    //                 ),
+    //               Text(_peekWavelength.toStringAsFixed(0), 
+    //                     style:  TextStyle(
+    //                       fontWeight: FontWeight.bold,
+    //                       fontSize: 36,
+    //                       color: Colors.blue.shade600,
+    //                       ),
+    //                   ),
+    //               const Text("nm", style: TextStyle(fontSize: 18)),
+                  
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //     SizedBox(
+    //       height: 100,
+    //       width: 700,
+    //       child: Card(
+    //           child: Column(
+    //             children: <Widget>[
+    //               Text(integratedLightIntensityLabel,
+    //                 style: const TextStyle(fontSize: 18),
+    //                 ),
+    //               Text(_irradiance.toStringAsExponential(3), 
+    //                     style:  TextStyle(
+    //                       fontWeight: FontWeight.bold,
+    //                       fontSize: 36,
+    //                       color: Colors.blue.shade600,
+    //                       ),
+    //                   ),
+    //               Text(_unit, style: const TextStyle(fontSize: 18)),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //       ],
+    //     ),
+    //   );
+    // }
+    // else if(_settings.measureMode == MeasureMode.ppfd)
+    // {
+    //   contents = Container(
+    //     child: Column(
+    //       children: <Widget>[
+    //     SizedBox(
+    //       height: 90,
+    //       width: 700,
+    //       child: Card(
+    //           child: Column(
+    //             children: <Widget>[
+    //               const Text("PPFD",
+    //                 style: TextStyle(fontSize: 18),
+    //                 ),
+    //               Text(_ppfd.toStringAsExponential(3), 
+    //                     style:  TextStyle(
+    //                       fontWeight: FontWeight.bold,
+    //                       fontSize: 32,
+    //                       color: Colors.blue.shade600,
+    //                       ),
+    //                   ),
+    //               const Text("umol/m2/s", style: TextStyle(fontSize: 18)),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //       SizedBox(
+    //       height: 90,
+    //       width: 700,
+    //       child: Card(
+    //           child: Column(
+    //             children: <Widget>[
+    //               const Text("PFD-UV",
+    //                 style: TextStyle(fontSize: 18),
+    //                 ),
+    //               Text(_pfdUv.toStringAsExponential(3), 
+    //                     style:  TextStyle(
+    //                       fontWeight: FontWeight.bold,
+    //                       fontSize: 32,
+    //                       color: Colors.blue.shade600,
+    //                       ),
+    //                   ),
+    //               const Text("umol/m2/s", style: TextStyle(fontSize: 18)),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //       SizedBox(
+    //       height: 90,
+    //       width: 700,
+    //       child: Card(
+    //           child: Column(
+    //             children: <Widget>[
+    //               const Text("PFD-B",
+    //                 style: TextStyle(fontSize: 18),
+    //                 ),
+    //               Text(_pfdB.toStringAsExponential(3), 
+    //                     style:  TextStyle(
+    //                       fontWeight: FontWeight.bold,
+    //                       fontSize: 32,
+    //                       color: Colors.blue.shade600,
+    //                       ),
+    //                   ),
+    //               const Text("umol/m2/s", style: TextStyle(fontSize: 18)),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //       SizedBox(
+    //       height: 90,
+    //       width: 700,
+    //       child: Card(
+    //           child: Column(
+    //             children: <Widget>[
+    //               const Text("PFD-G",
+    //                 style: TextStyle(fontSize: 18),
+    //                 ),
+    //               Text(_pfdG.toStringAsExponential(3), 
+    //                     style:  TextStyle(
+    //                       fontWeight: FontWeight.bold,
+    //                       fontSize: 32,
+    //                       color: Colors.blue.shade600,
+    //                       ),
+    //                   ),
+    //               const Text("umol/m2/s", style: TextStyle(fontSize: 18)),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //       SizedBox(
+    //       height: 90,
+    //       width: 700,
+    //       child: Card(
+    //           child: Column(
+    //             children: <Widget>[
+    //               const Text("PFD-R",
+    //                 style: TextStyle(fontSize: 18),
+    //                 ),
+    //               Text(_pfdR.toStringAsExponential(3), 
+    //                     style:  TextStyle(
+    //                       fontWeight: FontWeight.bold,
+    //                       fontSize: 32,
+    //                       color: Colors.blue.shade600,
+    //                       ),
+    //                   ),
+    //               const Text("umol/m2/s", style: TextStyle(fontSize: 18)),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //       SizedBox(
+    //       height: 90,
+    //       width: 700,
+    //       child: Card(
+    //           child: Column(
+    //             children: <Widget>[
+    //               const Text("PFD-FR",
+    //                 style: TextStyle(fontSize: 18),
+    //                 ),
+    //               Text(_pfdIr.toStringAsExponential(3), 
+    //                     style:  TextStyle(
+    //                       fontWeight: FontWeight.bold,
+    //                       fontSize: 32,
+    //                       color: Colors.blue.shade600,
+    //                       ),
+    //                   ),
+    //               const Text("umol/m2/s", style: TextStyle(fontSize: 18)),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //       ],
+    //     ),
+    //   );
+    // }
     return Scaffold(
       appBar: AppBar(
         title: const Text('UVVIS Spectrometer'),
@@ -157,82 +525,7 @@ class HomeState extends State<Home> {
       ),
       body: Center(
           child: Column(children: <Widget>[
-        SizedBox(
-          width: 700,
-          height: 240,
-          child: Card(
-            //color: Colors.white12,
-            child: SpectralLineChart.create(_spectralWl, _spectralData, _settings.sumRangeMin, _settings.sumRangeMax),) 
-        ),
-          SizedBox(
-          height: 100,
-          width: 700,
-          child: Card(
-              child: Column(
-                children: <Widget>[
-                  const Text("ピーク光強度", 
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                    ),
-                  Text(_peekPower.toStringAsExponential(3), 
-                        style:  TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 36,
-                          color: Colors.blue.shade600,
-                          ),
-                      ),
-                  Text(_unit+"/nm", style: const TextStyle(fontSize: 18)),
-                  
-                ],
-              ),
-            ),
-          ),
-          SizedBox(
-          height: 100,
-          width: 700,
-          child: Card(
-              child: Column(
-                children: <Widget>[
-                  const Text("ピーク波長", 
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                    ),
-                  Text(_peekWavelength.toStringAsFixed(0), 
-                        style:  TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 36,
-                          color: Colors.blue.shade600,
-                          ),
-                      ),
-                  const Text("nm", style: TextStyle(fontSize: 18)),
-                  
-                ],
-              ),
-            ),
-          ),
-        SizedBox(
-          height: 100,
-          width: 700,
-          child: Card(
-              child: Column(
-                children: <Widget>[
-                  const Text("総光強度",
-                    style: TextStyle(fontSize: 18),
-                    ),
-                  Text(_irradiance.toStringAsExponential(3), 
-                        style:  TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 36,
-                          color: Colors.blue.shade600,
-                          ),
-                      ),
-                  Text(_unit, style: const TextStyle(fontSize: 18)),
-                ],
-              ),
-            ),
-          ),
+          contents,
           Container(
             margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
            child: Row(
@@ -410,11 +703,11 @@ class SpectralLineChart extends StatelessWidget {
       charts.Series<LinearSpectral, int>(
         id: 'SpectralData',
         colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        // areaColorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        //areaColorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault.lighter,
         domainFn: (LinearSpectral sp, _) => sp.waveLength.toInt(),
         measureFn: (LinearSpectral sp, _) => sp.opticalPower,
         data: l,
-        strokeWidthPxFn: (datum, index) => 3,
+        strokeWidthPxFn: (datum, index) => 4,
 
       );
   }
