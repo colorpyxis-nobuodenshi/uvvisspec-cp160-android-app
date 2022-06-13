@@ -10,9 +10,9 @@ import 'package:usb_serial/transaction.dart';
 enum Unit { w, photon, mol }
 
 Map<Unit, String> unitMap = {
-  Unit.w: "W/m2",
-  Unit.photon: "photons/m2/s",
-  Unit.mol: "umol/m2/s",
+  Unit.w: "W\u2219m\u207B\u00B2",
+  Unit.photon: "photons\u2219m\u207B\u00B2\u2219S\u207B\u00B9",
+  Unit.mol: "\u00B5mol\u2219m\u207B\u00B2\u2219S\u207B\u00B9",
 };
 
 // class ResultReport {

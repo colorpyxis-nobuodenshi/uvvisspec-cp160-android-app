@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'uvvisspec.dart';
-import 'insects.dart';
+import 'uvvisspecapp.dart';
 
 enum MeasureMode { irradiance, insectsIrradiance, ppfd }
 enum IntegrateLigthIntensityRange { all, uv, b, g, r, fr, vis, custom }
@@ -17,7 +17,7 @@ class SettingsPage extends StatefulWidget {
 
 class SettingsPageState extends State<SettingsPage> {
   var _unitSel = Unit.w;
-  var _typeSel = InsectsSpectralIntensityType.None;
+  var _typeSel = FilterSpectralIntensityType.None;
   var _wlSumMin = "";
   var _wlSumMax = "";
   var _wlRangeValues = const RangeValues(0.31, 0.8);
@@ -97,7 +97,7 @@ class SettingsPageState extends State<SettingsPage> {
                                     _measureModeSel = MeasureMode.irradiance;
                                     _unitSel = Unit.w;
                                     _typeSel =
-                                        InsectsSpectralIntensityType.None;
+                                        FilterSpectralIntensityType.None;
                                   })
                                 }),
                         RadioListTile(
@@ -120,7 +120,7 @@ class SettingsPageState extends State<SettingsPage> {
                                     _measureModeSel = MeasureMode.ppfd;
                                     _unitSel = Unit.mol;
                                     _typeSel =
-                                        InsectsSpectralIntensityType.None;
+                                        FilterSpectralIntensityType.None;
                                   })
                                 }),
                       ],
@@ -143,74 +143,74 @@ class SettingsPageState extends State<SettingsPage> {
                           const Text("視感度・昆虫感度"),
                           RadioListTile(
                               title: const Text("なし"),
-                              value: InsectsSpectralIntensityType.None,
+                              value: FilterSpectralIntensityType.None,
                               groupValue: _typeSel,
                               onChanged: (value) => {
                                     setState(() => {
                                           _typeSel =
-                                              InsectsSpectralIntensityType.None
+                                              FilterSpectralIntensityType.None
                                         })
                                   }),
                           RadioListTile(
                               title: const Text("アザミウマ"),
-                              value: InsectsSpectralIntensityType.Azamiuma,
+                              value: FilterSpectralIntensityType.Azamiuma,
                               groupValue: _typeSel,
                               onChanged: (value) => {
                                     setState(() => {
                                           _typeSel =
-                                              InsectsSpectralIntensityType
+                                              FilterSpectralIntensityType
                                                   .Azamiuma
                                         })
                                   }),
                           RadioListTile(
                               title: const Text("ハチ"),
-                              value: InsectsSpectralIntensityType.Hachi,
+                              value: FilterSpectralIntensityType.Hachi,
                               groupValue: _typeSel,
                               onChanged: (value) => {
                                     setState(() => {
                                           _typeSel =
-                                              InsectsSpectralIntensityType.Hachi
+                                              FilterSpectralIntensityType.Hachi
                                         })
                                   }),
                           RadioListTile(
                               title: const Text("ガ(350)"),
-                              value: InsectsSpectralIntensityType.Ga350,
+                              value: FilterSpectralIntensityType.Ga350,
                               groupValue: _typeSel,
                               onChanged: (value) => {
                                     setState(() => {
                                           _typeSel =
-                                              InsectsSpectralIntensityType.Ga350
+                                              FilterSpectralIntensityType.Ga350
                                         })
                                   }),
                           RadioListTile(
                               title: const Text("ガ(550)"),
-                              value: InsectsSpectralIntensityType.Ga550,
+                              value: FilterSpectralIntensityType.Ga550,
                               groupValue: _typeSel,
                               onChanged: (value) => {
                                     setState(() => {
                                           _typeSel =
-                                              InsectsSpectralIntensityType.Ga550
+                                              FilterSpectralIntensityType.Ga550
                                         })
                                   }),
                           RadioListTile(
                               title: const Text("ガ(350+550)"),
-                              value: InsectsSpectralIntensityType.Ga350550,
+                              value: FilterSpectralIntensityType.Ga350550,
                               groupValue: _typeSel,
                               onChanged: (value) => {
                                     setState(() => {
                                           _typeSel =
-                                              InsectsSpectralIntensityType
+                                              FilterSpectralIntensityType
                                                   .Ga350550
                                         })
                                   }),
                           RadioListTile(
                               title: const Text("視感度"),
-                              value: InsectsSpectralIntensityType.Y,
+                              value: FilterSpectralIntensityType.Y,
                               groupValue: _typeSel,
                               onChanged: (value) => {
                                     setState(() => {
                                           _typeSel =
-                                              InsectsSpectralIntensityType.Y
+                                              FilterSpectralIntensityType.Y
                                         })
                                   }),
                         ],
@@ -402,9 +402,9 @@ class SettingsPageState extends State<SettingsPage> {
                                                   (_wlRangeValues.end * 1000)
                                                       .toInt()
                                                       .toString();
-                                              _integrateRangeSel =
-                                                  IntegrateLigthIntensityRange
-                                                      .all;
+                                              // _integrateRangeSel =
+                                              //     IntegrateLigthIntensityRange
+                                              //         .all;
                                             });
                                           },
                                         ),
