@@ -41,7 +41,7 @@ class Settings {
   double sumRangeMin = 310;
   double sumRangeMax = 800;
   String deviceExposureTime = "AUTO";
-  MeasureMode measureMode = MeasureMode.insectsIrradiance;
+  MeasureMode measureMode = MeasureMode.irradiance;
   IntegrateLigthIntensityRange integrateLigthIntensityRange = IntegrateLigthIntensityRange.all;
 }
 

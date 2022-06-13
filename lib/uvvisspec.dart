@@ -7,16 +7,12 @@ import 'package:usb_serial/usb_serial.dart';
 import 'package:usb_serial/transaction.dart';
 
 //
-enum Unit {
-  w,
-  photon,
-  mol
-}
+enum Unit { w, photon, mol }
 
 Map<Unit, String> unitMap = {
-  Unit.w : "W/m2",
-  Unit.photon : "photons/m2/s",
-  Unit.mol : "umol/m2/s",
+  Unit.w: "W/m2",
+  Unit.photon: "photons/m2/s",
+  Unit.mol: "umol/m2/s",
 };
 
 // class ResultReport {
@@ -49,7 +45,7 @@ Map<Unit, String> unitMap = {
 //     final unit = settings.unit;
 //     final wl = [...result.wl];
 //     var sp = [...result.sp];
-    
+
 //     if(unit == Unit.w) {
 //       for(int i=0;i<sp.length;i++){
 //         sp[i] = sp[i];
@@ -128,41 +124,37 @@ class UvVisSpecDevice {
   bool _measuring = false;
 
   Future<void> initialize() async {
-
     // _spectralDataRaw = List.generate(UVMINISPEC_SENSOR_NUM, (index) => 0.0);
     // _spectralWlRaw = List.generate(UVMINISPEC_SENSOR_NUM, (index) => 0.0);
     // _darkRaw = List.generate(UVMINISPEC_SENSOR_NUM, (index) => 0.0);
     // _spectralIntensityRaw = List.generate(UVMINISPEC_SENSOR_NUM, (index) => 1.0);
 
     UsbSerial.usbEventStream!.listen((UsbEvent event) async {
-      if(event.event == UsbEvent.ACTION_USB_ATTACHED) {
+      if (event.event == UsbEvent.ACTION_USB_ATTACHED) {
         _statusSubject.add(_status);
         var devices = await UsbSerial.listDevices();
-        for(var device in devices){
+        for (var device in devices) {
           var res = await _connectTo(device);
-          if(res) {
+          if (res) {
             await measStart();
           }
         }
-        
       }
-      if(event.event == UsbEvent.ACTION_USB_DETACHED) {
+      if (event.event == UsbEvent.ACTION_USB_DETACHED) {
         await measStop();
         await _connectTo(null);
         _status.detached = true;
         _statusSubject.add(_status);
       }
-      
     });
 
     var devices = await UsbSerial.listDevices();
-    for(var device in devices){
+    for (var device in devices) {
       var res = await _connectTo(device);
-      if(res) {
+      if (res) {
         await measStart();
       }
     }
-
   }
 
   Future<void> deinitialize() async {
@@ -171,26 +163,23 @@ class UvVisSpecDevice {
     _timer?.cancel();
   }
 
-  Future<void> measStart() async {  
-    _timer = Timer.periodic(const Duration(milliseconds:500),
-     (timer) {
-
-        if(_measuring) {
-          return;
-        }
-        if(_status.measurestopped){
-          timer.cancel();
-          return;
-        }
-        if(_status.measurestarted){
-          _measuring = true;
-          meas().then((value) {
-            status();
-            _measuring = false;
-          });
-        }
-        
-      });
+  Future<void> measStart() async {
+    _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      if (_measuring) {
+        return;
+      }
+      if (_status.measurestopped) {
+        timer.cancel();
+        return;
+      }
+      if (_status.measurestarted) {
+        _measuring = true;
+        meas().then((value) {
+          status();
+          _measuring = false;
+        });
+      }
+    });
 
     _status.measurestarted = true;
     _status.measurestopped = false;
@@ -204,27 +193,25 @@ class UvVisSpecDevice {
   }
 
   Future<void> meas() async {
-    
     //var wl = _spectralWlRaw;
     //var wl = List.generate(UVMINISPEC_SENSOR_NUM, (index) => 0.0);
     //var p = List.generate(UVMINISPEC_SENSOR_NUM, (index) => 0.0);
-    
-    try
-    {
-      var res = await _transaction?.transaction(_port!, const AsciiEncoder().convert('MEAS\n'), const Duration(seconds: 60));
-      if(res == null) {
+
+    try {
+      var res = await _transaction?.transaction(_port!,
+          const AsciiEncoder().convert('MEAS\n'), const Duration(seconds: 60));
+      if (res == null) {
         return;
       }
       var values = res.split('\r');
       var len = values.length - 1;
       var wl = <double>[];
-      var p = <double>[]; 
-      for(var i=0;i<len;i++)
-      {
+      var p = <double>[];
+      for (var i = 0; i < len; i++) {
         var values2 = values[i].split(':');
         wl.add(double.parse(values2[0]));
         p.add(double.parse(values2[1]));
-        if(p[i] < 1e-9){
+        if (p[i] < 1e-9) {
           p[i] = 0.0;
         }
       }
@@ -237,7 +224,7 @@ class UvVisSpecDevice {
       var pp = p2.reduce(max);
       var pwl = wl2[p2.indexWhere((x) => (x == pp))];
       var ir = 0.0;
-      for(var i=0; i<wl2.length; i++) {
+      for (var i = 0; i < wl2.length; i++) {
         ir += p2[i];
       }
 
@@ -250,30 +237,29 @@ class UvVisSpecDevice {
       result.wl = wl2;
       result.pp = pp;
       _resultSubject.add(result);
-    }
-    catch(e)
-    {
+    } catch (e) {
       return;
     }
   }
 
   Future<void> dark() async {
-    var res = await _transaction?.transaction(_port!, const AsciiEncoder().convert('DARK\n'), const Duration(seconds: 60));
+    var res = await _transaction?.transaction(_port!,
+        const AsciiEncoder().convert('DARK\n'), const Duration(seconds: 60));
   }
 
   Future<void> status() async {
-    var res = await _transaction?.transaction(_port!, const AsciiEncoder().convert('ST?\n'), const Duration(seconds: 60));
+    var res = await _transaction?.transaction(_port!,
+        const AsciiEncoder().convert('ST?\n'), const Duration(seconds: 60));
     var v = res?.split('/')[1].split(':');
-    if(v != null) {
-      var status = v[0];//int.parse(v[0]);
+    if (v != null) {
+      var status = v[0]; //int.parse(v[0]);
       //var temperature = double.parse(v[1]);
       _status.devicewarn = status == "W" ? true : false;
       _status.deviceerror = status == "E" ? true : false;
       _statusSubject.add(_status);
     }
-
   }
-  
+
   Future<void> changeExposureTime(String exp) async {
     var msg = "EXP/100us\n";
     switch (exp) {
@@ -300,19 +286,19 @@ class UvVisSpecDevice {
         break;
       default:
     }
-    var res = await _transaction?.transaction(_port!, const AsciiEncoder().convert(msg), const Duration(seconds: 60));
-    
+    var res = await _transaction?.transaction(
+        _port!, const AsciiEncoder().convert(msg), const Duration(seconds: 60));
   }
 
   Stream<UVVisSpecDeviceResult> get resultStream {
     return _resultSubject.stream;
   }
+
   Stream<UVVisSpecDeviceStatus> get statusStream {
     return _statusSubject.stream;
   }
 
   Future<bool> _connectTo(UsbDevice? device) async {
-
     if (_transaction != null) {
       _transaction?.dispose();
       _transaction = null;
@@ -371,19 +357,19 @@ class UvVisSpecDevice {
     //   si[i] = double.parse(sis![i]);
     // }
 
-    var res5 = await _transaction?.transaction(_port!, const AsciiEncoder().convert('EXP/AUTO\n'), const Duration(seconds: 1));
+    var res5 = await _transaction?.transaction(_port!,
+        const AsciiEncoder().convert('EXP/AUTO\n'), const Duration(seconds: 1));
 
     // _spectralIntensityRaw = si;
     // _spectralWlRaw = wl;
-    
+
     _status.connected = true;
     _statusSubject.add(_status);
-    
+
     return true;
   }
 
-  List<List<double>> _correct(List<double> wl, List<double> sp)
-  {
+  List<List<double>> _correct(List<double> wl, List<double> sp) {
     var wlMax = 800;
     var wlMin = 310;
     var len = wlMax - wlMin + 1;
@@ -391,13 +377,11 @@ class UvVisSpecDevice {
     var sp2 = List.generate(len, (index) => 0.0);
     //var sp3 = List.generate(len, (index) => 0.0);
     //var z = _makeSplineTable(wl, sp);
-    for(var i=0;i<len;i++)
-    {
+    for (var i = 0; i < len; i++) {
       sp2[i] = _interporateLinear(wl2[i], wl, sp);
       //sp2[i] = _interporateSpline(wl2[i], wl, sp, z);
       //sp2[i] = _interporateLagrange(wl2[i], wl, sp);
-      if(sp2[i] < 0.0)
-      {
+      if (sp2[i] < 0.0) {
         sp2[i] = 0.0;
       }
     }
@@ -406,123 +390,116 @@ class UvVisSpecDevice {
   }
 
   List<double> _makeSplineTable(List<double> x, List<double> y) {
-		var n = x.length;
+    var n = x.length;
     var h = List.generate(n, (index) => 0.0);
-		var d = List.generate(n, (index) => 0.0);
+    var d = List.generate(n, (index) => 0.0);
     var z = List.generate(n, (index) => 0.0);
-		
-		z[0]=0; z[n-1]=0;
-		for(int i = 0; i<n-1; i++) {
-			h[i] =  x[i+1]-x[i];
-			d[i+1] = (y[i+1]-y[i])/h[i];
-		}
-		z[1] = d[2]-d[1]-h[0]*z[0];
-		d[1] = 2*(x[2]-x[0]);
-		for(int i=1; i<n-2; i++){
-			double t = h[i]/d[i];
-			z[i+1] = d[i+2]-d[i+1]-z[i]*t;
-			d[i+1] = 2*(x[i+2]-x[i])-h[i]*t;
-		}
-		z[n-2] -= h[n-2]*z[n-1];
-		for(int i=n-2; i>0; i--){
-			z[i] = (z[i]-h[i]*z[i+1])/d[i];
-		}
+
+    z[0] = 0;
+    z[n - 1] = 0;
+    for (int i = 0; i < n - 1; i++) {
+      h[i] = x[i + 1] - x[i];
+      d[i + 1] = (y[i + 1] - y[i]) / h[i];
+    }
+    z[1] = d[2] - d[1] - h[0] * z[0];
+    d[1] = 2 * (x[2] - x[0]);
+    for (int i = 1; i < n - 2; i++) {
+      double t = h[i] / d[i];
+      z[i + 1] = d[i + 2] - d[i + 1] - z[i] * t;
+      d[i + 1] = 2 * (x[i + 2] - x[i]) - h[i] * t;
+    }
+    z[n - 2] -= h[n - 2] * z[n - 1];
+    for (int i = n - 2; i > 0; i--) {
+      z[i] = (z[i] - h[i] * z[i + 1]) / d[i];
+    }
     return z;
-	}
-  double _interporateSpline(double t, List<double> x, List<double> y, List<double> z)
-  {
+  }
+
+  double _interporateSpline(
+      double t, List<double> x, List<double> y, List<double> z) {
     int i, j, k;
-		double d, h;
+    double d, h;
     var n = z.length;
 
-		i = 0; j = n-1;
-		while (i<j){
-			k = (i+j)~/2;
-			if(x[k] < t) {
-			  i = k + 1;
-			} else {
-			  j = k;
-			}
-		}
-		if (i>0) i--;
-		h = x[i+1]-x[i];
-    d = t-x[i];
-		return (((z[i+1] - z[i]) * d / h + z[i] * 3) * d + ((y[i+ 1] - y[i]) / h - (z[i] * 2 + z[i+1]) * h)) * d + y[i];
+    i = 0;
+    j = n - 1;
+    while (i < j) {
+      k = (i + j) ~/ 2;
+      if (x[k] < t) {
+        i = k + 1;
+      } else {
+        j = k;
+      }
+    }
+    if (i > 0) i--;
+    h = x[i + 1] - x[i];
+    d = t - x[i];
+    return (((z[i + 1] - z[i]) * d / h + z[i] * 3) * d +
+                ((y[i + 1] - y[i]) / h - (z[i] * 2 + z[i + 1]) * h)) *
+            d +
+        y[i];
   }
 
-  double _interporateLinear(double v, List<double> src1, List<double> src2)
-  {
-      var x1 = 0.0;
-      var x2 = 0.0;
-      var y1 = 0.0;
-      var y2 = 0.0;
-      var x = 0.0;
-      var t2 = 1;
-      var t1 = 1;
-      var len = src1.length;
+  double _interporateLinear(double v, List<double> src1, List<double> src2) {
+    var x1 = 0.0;
+    var x2 = 0.0;
+    var y1 = 0.0;
+    var y2 = 0.0;
+    var x = 0.0;
+    var t2 = 1;
+    var t1 = 1;
+    var len = src1.length;
 
-      for(var i=1;i<len;i++)
-      {
-          x = src1[i];
-          if(x > v)
-          {
-              t2 = i;
-              x2 = x;
-              break;
-          }
+    for (var i = 1; i < len; i++) {
+      x = src1[i];
+      if (x > v) {
+        t2 = i;
+        x2 = x;
+        break;
       }
-      t1 = t2 - 1;
-      
-      x1 = src1[t1];
+    }
+    t1 = t2 - 1;
 
-      y1 = src2[t1];
-      y2 = src2[t2];
+    x1 = src1[t1];
 
-      var value = (x2 - x1 ) == 0.0 ? 0.0 : y1 + (y2 - y1) * (v - x1) / (x2 - x1);
-      
-      if(value < 0.0)
-      {
-        value = 0.0;
-      }
+    y1 = src2[t1];
+    y2 = src2[t2];
 
-      return value;
+    var value = (x2 - x1) == 0.0 ? 0.0 : y1 + (y2 - y1) * (v - x1) / (x2 - x1);
+
+    if (value < 0.0) {
+      value = 0.0;
+    }
+
+    return value;
   }
 
-  double _interporateLagrange(double x, List<double> v1, List<double> v2)
-  {
-      var t1 = 1;
-      var n = 2;
-      for(var i=2;i<v1.length-1;i++)
-      {
-        t1 = i;
-        if(v1[i] > x)
-        {
-            break;
-        }
-          
+  double _interporateLagrange(double x, List<double> v1, List<double> v2) {
+    var t1 = 1;
+    var n = 2;
+    for (var i = 2; i < v1.length - 1; i++) {
+      t1 = i;
+      if (v1[i] > x) {
+        break;
       }
-      
-      var xx = [v1[t1-2],v1[t1-1],v1[t1],v1[t1+1]];
-      var yy = [v2[t1-2],v2[t1-1],v2[t1],v2[t1+1]];
-      var p = 0.0;
-      var s = 0.0;
-      var n2 = xx.length;
-      for(var j=0;j<n2;j++)
-      {
-        p = yy[j];
-        for(var i=0;i<n2;i++)
-        {
-          if(i==j) continue;
-          if((xx[j] - xx[i]) != 0.0) p *= (x - xx[i])/(xx[j] - xx[i]); 
-        }
-        s += p;
-      }
-      if(s < 0)
-      {
-        s == 0.0;
-      }
-      return s;
-  }
+    }
 
+    var xx = [v1[t1 - 2], v1[t1 - 1], v1[t1], v1[t1 + 1]];
+    var yy = [v2[t1 - 2], v2[t1 - 1], v2[t1], v2[t1 + 1]];
+    var p = 0.0;
+    var s = 0.0;
+    var n2 = xx.length;
+    for (var j = 0; j < n2; j++) {
+      p = yy[j];
+      for (var i = 0; i < n2; i++) {
+        if (i == j) continue;
+        if ((xx[j] - xx[i]) != 0.0) p *= (x - xx[i]) / (xx[j] - xx[i]);
+      }
+      s += p;
+    }
+    if (s < 0) {
+      s == 0.0;
+    }
+    return s;
+  }
 }
-

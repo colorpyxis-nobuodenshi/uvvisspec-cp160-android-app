@@ -25,7 +25,6 @@ class UVVisSpecResultConverterForPlants {
     double pfdIr = 0.0;//700-800
     double pfd = 0.0;
     
-
     var wl = [...uvsr.wl];
     var sp = [...uvsr.sp];
     var sp2 = List.generate(sp.length, (index) => 1.0);
