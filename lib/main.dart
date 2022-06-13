@@ -488,7 +488,7 @@ class HomeState extends State<Home> {
     // }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('UVVIS Spectrometer'),
+        title: const Text('虫用分光放射照度計CP160'),
         actions: <Widget>[
           //(_connected) ? const Icon(Icons.check_circle_outline) : const Icon(Icons.highlight_off_outlined),
           (_showWarning) ? const Icon(Icons.warning) : const SizedBox.shrink(),
