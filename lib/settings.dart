@@ -136,90 +136,6 @@ class SettingsPageState extends State<SettingsPage> {
                   //   ],
                   // ),
                   // ),
-                  Visibility(
-                    child: Card(
-                      child: Column(
-                        children: <Widget>[
-                          const Text("視感度・昆虫感度"),
-                          RadioListTile(
-                              title: const Text("なし"),
-                              value: FilterSpectralIntensityType.None,
-                              groupValue: _typeSel,
-                              onChanged: (value) => {
-                                    setState(() => {
-                                          _typeSel =
-                                              FilterSpectralIntensityType.None
-                                        })
-                                  }),
-                          RadioListTile(
-                              title: const Text("アザミウマ"),
-                              value: FilterSpectralIntensityType.Azamiuma,
-                              groupValue: _typeSel,
-                              onChanged: (value) => {
-                                    setState(() => {
-                                          _typeSel =
-                                              FilterSpectralIntensityType
-                                                  .Azamiuma
-                                        })
-                                  }),
-                          RadioListTile(
-                              title: const Text("ハチ"),
-                              value: FilterSpectralIntensityType.Hachi,
-                              groupValue: _typeSel,
-                              onChanged: (value) => {
-                                    setState(() => {
-                                          _typeSel =
-                                              FilterSpectralIntensityType.Hachi
-                                        })
-                                  }),
-                          RadioListTile(
-                              title: const Text("ガ(350)"),
-                              value: FilterSpectralIntensityType.Ga350,
-                              groupValue: _typeSel,
-                              onChanged: (value) => {
-                                    setState(() => {
-                                          _typeSel =
-                                              FilterSpectralIntensityType.Ga350
-                                        })
-                                  }),
-                          RadioListTile(
-                              title: const Text("ガ(550)"),
-                              value: FilterSpectralIntensityType.Ga550,
-                              groupValue: _typeSel,
-                              onChanged: (value) => {
-                                    setState(() => {
-                                          _typeSel =
-                                              FilterSpectralIntensityType.Ga550
-                                        })
-                                  }),
-                          RadioListTile(
-                              title: const Text("ガ(350+550)"),
-                              value: FilterSpectralIntensityType.Ga350550,
-                              groupValue: _typeSel,
-                              onChanged: (value) => {
-                                    setState(() => {
-                                          _typeSel =
-                                              FilterSpectralIntensityType
-                                                  .Ga350550
-                                        })
-                                  }),
-                          RadioListTile(
-                              title: const Text("視感度"),
-                              value: FilterSpectralIntensityType.Y,
-                              groupValue: _typeSel,
-                              onChanged: (value) => {
-                                    setState(() => {
-                                          _typeSel =
-                                              FilterSpectralIntensityType.Y
-                                        })
-                                  }),
-                        ],
-                      ),
-                    ),
-                    visible: _measureModeSel == MeasureMode.insectsIrradiance
-                        ? true
-                        : false,
-                  ),
                   Card(
                     child: Column(
                       children: <Widget>[
@@ -455,6 +371,90 @@ class SettingsPageState extends State<SettingsPage> {
                         )
                       ],
                     ),
+                  ),
+                  Visibility(
+                    child: Card(
+                      child: Column(
+                        children: <Widget>[
+                          const Text("視感度・昆虫感度"),
+                          RadioListTile(
+                              title: const Text("なし"),
+                              value: FilterSpectralIntensityType.None,
+                              groupValue: _typeSel,
+                              onChanged: (value) => {
+                                    setState(() => {
+                                          _typeSel =
+                                              FilterSpectralIntensityType.None
+                                        })
+                                  }),
+                          RadioListTile(
+                              title: const Text("アザミウマ"),
+                              value: FilterSpectralIntensityType.Azamiuma,
+                              groupValue: _typeSel,
+                              onChanged: (value) => {
+                                    setState(() => {
+                                          _typeSel =
+                                              FilterSpectralIntensityType
+                                                  .Azamiuma
+                                        })
+                                  }),
+                          RadioListTile(
+                              title: const Text("ハチ"),
+                              value: FilterSpectralIntensityType.Hachi,
+                              groupValue: _typeSel,
+                              onChanged: (value) => {
+                                    setState(() => {
+                                          _typeSel =
+                                              FilterSpectralIntensityType.Hachi
+                                        })
+                                  }),
+                          RadioListTile(
+                              title: const Text("ガ(350)"),
+                              value: FilterSpectralIntensityType.Ga350,
+                              groupValue: _typeSel,
+                              onChanged: (value) => {
+                                    setState(() => {
+                                          _typeSel =
+                                              FilterSpectralIntensityType.Ga350
+                                        })
+                                  }),
+                          RadioListTile(
+                              title: const Text("ガ(550)"),
+                              value: FilterSpectralIntensityType.Ga550,
+                              groupValue: _typeSel,
+                              onChanged: (value) => {
+                                    setState(() => {
+                                          _typeSel =
+                                              FilterSpectralIntensityType.Ga550
+                                        })
+                                  }),
+                          RadioListTile(
+                              title: const Text("ガ(350+550)"),
+                              value: FilterSpectralIntensityType.Ga350550,
+                              groupValue: _typeSel,
+                              onChanged: (value) => {
+                                    setState(() => {
+                                          _typeSel =
+                                              FilterSpectralIntensityType
+                                                  .Ga350550
+                                        })
+                                  }),
+                          RadioListTile(
+                              title: const Text("視感度"),
+                              value: FilterSpectralIntensityType.Y,
+                              groupValue: _typeSel,
+                              onChanged: (value) => {
+                                    setState(() => {
+                                          _typeSel =
+                                              FilterSpectralIntensityType.Y
+                                        })
+                                  }),
+                        ],
+                      ),
+                    ),
+                    visible: _measureModeSel == MeasureMode.insectsIrradiance
+                        ? true
+                        : false,
                   ),
                   // Card(
                   //   child: Column(
