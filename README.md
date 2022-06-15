@@ -1,3 +1,3 @@
-# uvminispec_app
-CP160分光放射照度計アンドロイドアプリ
+# uvvisspec cp160 app
+虫用分光放射照度計CP160アプリ
 
