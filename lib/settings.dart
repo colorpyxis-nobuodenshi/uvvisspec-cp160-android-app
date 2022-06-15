@@ -71,7 +71,7 @@ class SettingsPageState extends State<SettingsPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Settings'),
+          title: const Text('設定'),
           actions: <Widget>[
             IconButton(
               icon: const Icon(Icons.settings),
