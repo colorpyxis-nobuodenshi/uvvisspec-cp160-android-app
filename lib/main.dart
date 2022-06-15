@@ -110,7 +110,6 @@ class HomeState extends State<Home> {
         _irradiance = ir1;
         _peekWavelength = pwl1;
         _peekPower = pp1;
-
       });
     });
 
@@ -162,102 +161,6 @@ class HomeState extends State<Home> {
           _settings.sumRangeMax.toInt().toString() +
           " nm)";
     }
-    var contents = Container();
-    contents = Container(
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-              width: 700,
-              height: 250,
-              child: Card(
-                child: SpectralLineChart.create(_spectralWl, _spectralData,
-                    _settings.sumRangeMin, _settings.sumRangeMax),
-              )),
-          SizedBox(
-            height: 120,
-            width: 700,
-            child: Card(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Visibility(child: Text(
-                    filterNameMap[_settings.type].toString(),
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  visible: _settings.measureMode == MeasureMode.insectsIrradiance ),
-                  Text(
-                    integratedLightIntensityLabel,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  Text(
-                    _irradiance.toStringAsExponential(3),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 34,
-                      color: Colors.blue.shade600,
-                    ),
-                  ),
-                  Text(_unit, style: const TextStyle(fontSize: 16)),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 86,
-            width: 700,
-            child: Card(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  const Text(
-                    "ピーク光強度",
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                  Text(
-                    _peekPower.toStringAsExponential(3),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 26,
-                      color: Colors.blue.shade600,
-                    ),
-                  ),
-                  Text(_unit + "\u2219nm\u207B\u00B9", style: const TextStyle(fontSize: 16)),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 85,
-            width: 700,
-            child: Card(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  const Text(
-                    "ピーク波長",
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                  Text(
-                    _peekWavelength.toStringAsFixed(0),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 28,
-                      color: Colors.blue.shade600,
-                    ),
-                  ),
-                  const Text("nm", style: TextStyle(fontSize: 16)),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
 
     return Scaffold(
       appBar: AppBar(
@@ -290,152 +193,239 @@ class HomeState extends State<Home> {
         ],
       ),
       body: Center(
-          child: Column(children: <Widget>[
-        contents,
-        Container(
-          margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              SizedBox(
-                height: 80,
-                width: 80,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    await device.measStop();
-
-                    var res = await showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (x) => AlertDialog(
-                              content: const Text('ダーク補正をします.\r\n遮光してください.'),
-                              actions: [
-                                TextButton(
-                                  child: const Text('Cancel'),
-                                  onPressed: () => Navigator.of(context).pop(0),
-                                ),
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: () => Navigator.of(context).pop(1),
-                                ),
-                              ],
-                            ));
-
-                    if (res == 1) {
-                      showDialog(
-                          context: context,
-                          builder: (x) {
-                            return AlertDialog(
-                              content: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Padding(
-                                            child: SizedBox(
-                                                child:
-                                                    const CircularProgressIndicator(
-                                                        strokeWidth: 3),
-                                                width: 32,
-                                                height: 32),
-                                            padding: const EdgeInsets.only(
-                                                bottom: 16)),
-                                        Padding(
-                                            child: const Text(
-                                              'しばらくお待ちください...',
-                                              style:
-                                                  const TextStyle(fontSize: 16),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            padding: const EdgeInsets.only(
-                                                bottom: 4))
-                                      ])),
-                            );
-                          });
-                      // showGeneralDialog(
-                      //   context: context,
-                      //   barrierDismissible: false,
-                      //   //transitionDuration: const Duration(seconds: 60),
-                      //   barrierColor: Colors.black.withOpacity(0.5),
-                      //   pageBuilder: (BuildContext context, Animation animation, Animation secondaryAnimation) {
-                      //     return Center(
-                      //       child: SizedBox(
-                      //         height: 300,
-                      //         width: 300,
-                      //         child: Column(
-                      //         // ignore: prefer_const_literals_to_create_immutables
-                      //         children: [
-                      //           const CircularProgressIndicator(),
-                      //           const Text("ダーク補正中...\r\nしばらくお待ちください.", style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal, color: Colors.black87, decoration: TextDecoration.none),)
-                      //         ]
-                      //       ),
-                      //       ),
-                      //     );
-
-                      //   }
-                      // );
-
-                      await device.dark();
-
-                      Navigator.of(context).pop();
-
-                      // dialog = const AlertDialog(
-                      //   content: Text('ダーク補正しました.'),
-                      // );
-                      // await showDialog(context: context, builder: (x) => dialog);
-                    }
-                    await device.measStart();
-                  },
-                  child: const Text("DARK"),
-                  style: ElevatedButton.styleFrom(
-                      shape: const StadiumBorder(), primary: Colors.white38),
-                ),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+            Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  SizedBox(
+                      width: 700,
+                      height: 250,
+                      child: Card(
+                        child: SpectralLineChart.create(
+                            _spectralWl,
+                            _spectralData,
+                            _settings.sumRangeMin,
+                            _settings.sumRangeMax),
+                      )),
+                  SizedBox(
+                    height: 120,
+                    width: 700,
+                    child: Card(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Visibility(
+                              child: Text(
+                                filterNameMap[_settings.type].toString(),
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              visible: _settings.measureMode ==
+                                  MeasureMode.insectsIrradiance),
+                          Text(
+                            integratedLightIntensityLabel,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Text(
+                            _irradiance.toStringAsExponential(3),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 34,
+                              color: Colors.blue.shade600,
+                            ),
+                          ),
+                          Text(_unit, style: const TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 86,
+                    width: 700,
+                    child: Card(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          const Text(
+                            "ピーク光強度",
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            _peekPower.toStringAsExponential(3),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 26,
+                              color: Colors.blue.shade600,
+                            ),
+                          ),
+                          Text(_unit + "\u2219nm\u207B\u00B9",
+                              style: const TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 85,
+                    width: 700,
+                    child: Card(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          const Text(
+                            "ピーク波長",
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            _peekWavelength.toStringAsFixed(0),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 28,
+                              color: Colors.blue.shade600,
+                            ),
+                          ),
+                          const Text("nm", style: TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(
-                height: 90,
-                width: 90,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    setState(() {});
-                    if (_measuring) {
-                      await device.measStop();
-                      return;
-                    }
-                    await device.measStart();
-                  },
-                  child: !_measuring ? const Text("MEAS") : const Text("HOLD"),
-                  style: ElevatedButton.styleFrom(
-                      shape: const StadiumBorder(),
-                      primary:
-                          !_measuring ? Colors.green : Colors.blue.shade800),
-                ),
+            ),
+            Container(
+              margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  SizedBox(
+                    height: 80,
+                    width: 80,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        await device.measStop();
+
+                        var res = await showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (x) => AlertDialog(
+                                  content:
+                                      const Text('ダーク補正をします.\r\n遮光してください.'),
+                                  actions: [
+                                    TextButton(
+                                      child: const Text('Cancel'),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(0),
+                                    ),
+                                    TextButton(
+                                      child: const Text('OK'),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(1),
+                                    ),
+                                  ],
+                                ));
+
+                        if (res == 1) {
+                          showDialog(
+                              context: context,
+                              builder: (x) {
+                                return AlertDialog(
+                                  content: Container(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: const <Widget>[
+                                            Padding(
+                                                child: SizedBox(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                            strokeWidth: 3),
+                                                    width: 32,
+                                                    height: 32),
+                                                padding: EdgeInsets.only(
+                                                    bottom: 16)),
+                                            Padding(
+                                                child: Text(
+                                                  'しばらくお待ちください...',
+                                                  style:
+                                                      TextStyle(fontSize: 16),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                padding:
+                                                    EdgeInsets.only(bottom: 4))
+                                          ])),
+                                );
+                              });
+
+                          await device.dark();
+
+                          Navigator.of(context).pop();
+
+                          // dialog = const AlertDialog(
+                          //   content: Text('ダーク補正しました.'),
+                          // );
+                          // await showDialog(context: context, builder: (x) => dialog);
+                        }
+                        await device.measStart();
+                      },
+                      child: const Text("DARK"),
+                      style: ElevatedButton.styleFrom(
+                          shape: const StadiumBorder(),
+                          primary: Colors.white38),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 90,
+                    width: 90,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        setState(() {});
+                        if (_measuring) {
+                          await device.measStop();
+                          return;
+                        }
+                        await device.measStart();
+                      },
+                      child:
+                          !_measuring ? const Text("MEAS") : const Text("HOLD"),
+                      style: ElevatedButton.styleFrom(
+                          shape: const StadiumBorder(),
+                          primary: !_measuring
+                              ? Colors.green
+                              : Colors.blue.shade800),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 80,
+                    width: 80,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final now = DateTime.now();
+                        final filename =
+                            '${now.year}${now.month.toString().padLeft(2, "0")}${now.day.toString().padLeft(2, "0")}${now.hour.toString().padLeft(2, "0")}${now.minute.toString().padLeft(2, "0")}${now.second.toString().padLeft(2, "0")}';
+                        _currentResult.measureDatetime = now.toString();
+                        storage.write(filename, _currentResult);
+                        var dialog = const AlertDialog(
+                          content: Text("保存しました."),
+                        );
+                        await showDialog(
+                            context: context, builder: (x) => dialog);
+                      },
+                      child: const Text("STORE"),
+                      style: ElevatedButton.styleFrom(
+                          shape: const StadiumBorder(), primary: Colors.orange),
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(
-                height: 80,
-                width: 80,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final now = DateTime.now();
-                    final filename =
-                        '${now.year}${now.month.toString().padLeft(2, "0")}${now.day.toString().padLeft(2, "0")}${now.hour.toString().padLeft(2, "0")}${now.minute.toString().padLeft(2, "0")}${now.second.toString().padLeft(2, "0")}';
-                    _currentResult.measureDatetime = now.toString();
-                    storage.write(filename, _currentResult);
-                    var dialog = const AlertDialog(
-                      content: Text("保存しました."),
-                    );
-                    await showDialog(context: context, builder: (x) => dialog);
-                  },
-                  child: const Text("STORE"),
-                  style: ElevatedButton.styleFrom(
-                      shape: const StadiumBorder(), primary: Colors.orange),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ])),
+            ),
+          ])),
     );
   }
 }
@@ -462,9 +452,9 @@ class SpectralLineChart extends StatelessWidget {
     }
 
     return charts.Series<LinearSpectral, int>(
-      id: 'SpectralData',
+      id: 'Spectral',
       colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-      //areaColorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault.lighter,
+      areaColorFn: (_, __) => charts.MaterialPalette.transparent,
       domainFn: (LinearSpectral sp, _) => sp.waveLength.toInt(),
       measureFn: (LinearSpectral sp, _) => sp.opticalPower,
       data: l,
@@ -500,31 +490,23 @@ class SpectralLineChart extends StatelessWidget {
               behaviorPosition: charts.BehaviorPosition.bottom,
               titleOutsideJustification: charts.OutsideJustification.end),
           charts.RangeAnnotation([
-            // charts.RangeAnnotationSegment(310, sumRangeMin, charts.RangeAnnotationAxisType.domain, color: charts.ColorUtil.fromDartColor(Colors.white10)),
-            // charts.RangeAnnotationSegment(sumRangeMax, 800, charts.RangeAnnotationAxisType.domain, color: charts.ColorUtil.fromDartColor(Colors.white10)),
-            // charts.RangeAnnotationSegment(
-            //     sumRangeMin, sumRangeMax, charts.RangeAnnotationAxisType.domain,
-            //     color: charts.ColorUtil.fromDartColor(Colors.black12),
-            //     startLabel: sumRangeMin.toInt().toString() + "",
-            //     endLabel: sumRangeMax.toInt().toString() + "",
-            //     labelStyleSpec: const charts.TextStyleSpec(
-            //         color: charts.MaterialPalette.white),
-            //     labelDirection: charts.AnnotationLabelDirection.horizontal),
             charts.LineAnnotationSegment(
-            sumRangeMin, charts.RangeAnnotationAxisType.domain,
-            color: charts.ColorUtil.fromDartColor(Colors.white), strokeWidthPx: 2,
-            startLabel: sumRangeMin.toInt().toString() + "",
-            labelStyleSpec: const charts.TextStyleSpec(
-            color: charts.MaterialPalette.white),
-            //labelDirection: charts.AnnotationLabelDirection.horizontal
+              sumRangeMin, charts.RangeAnnotationAxisType.domain,
+              color: charts.ColorUtil.fromDartColor(Colors.white),
+              strokeWidthPx: 2,
+              startLabel: sumRangeMin.toInt().toString() + "",
+              labelStyleSpec: const charts.TextStyleSpec(
+                  color: charts.MaterialPalette.white),
+              //labelDirection: charts.AnnotationLabelDirection.horizontal
             ),
             charts.LineAnnotationSegment(
-            sumRangeMax, charts.RangeAnnotationAxisType.domain,
-            color: charts.ColorUtil.fromDartColor(Colors.white), strokeWidthPx: 2,
-            endLabel: sumRangeMax.toInt().toString() + "",
-            labelStyleSpec: const charts.TextStyleSpec(
-            color: charts.MaterialPalette.white),
-            //labelDirection: charts.AnnotationLabelDirection.horizontal
+              sumRangeMax, charts.RangeAnnotationAxisType.domain,
+              color: charts.ColorUtil.fromDartColor(Colors.white),
+              strokeWidthPx: 2,
+              endLabel: sumRangeMax.toInt().toString() + "",
+              labelStyleSpec: const charts.TextStyleSpec(
+                  color: charts.MaterialPalette.white),
+              //labelDirection: charts.AnnotationLabelDirection.horizontal
             ),
           ]),
         ]);
