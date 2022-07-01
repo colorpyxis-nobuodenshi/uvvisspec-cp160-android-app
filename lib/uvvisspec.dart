@@ -15,78 +15,7 @@ Map<Unit, String> unitMap = {
   Unit.mol: "\u00B5mol\u2219m\u207B\u00B2\u2219S\u207B\u00B9",
 };
 
-// class ResultReport {
-//   List<double> sp = [];
-//   List<double> wl = [];
-//   double pwl = 0.0;
-//   double ir = 0.0;
-//   double pp = 0.0;
-//   List<double> spRaw = [];
-//   List<double> wlRaw = [];
-//   double wlRangeMin = 310;
-//   double wlRangeMax = 800;
-//   String measureDatetime = "";
-//   String unit = "";
-// }
 
-// class Settings {
-//   Unit unit = Unit.w;
-//   double sumRangeMin = 310;
-//   double sumRangeMax = 800;
-//   String deviceExposureTime = "AUTO";
-//   InsectsSpectralIntensityType type = InsectsSpectralIntensityType.Azamiuma;
-// }
-
-// class UVMiniSpecResultConverter {
-//   Future<ResultReport> execute(Settings settings, UVMiniSpecDeviceResult result) async {
-
-//     var report = ResultReport();
-
-//     final unit = settings.unit;
-//     final wl = [...result.wl];
-//     var sp = [...result.sp];
-
-//     if(unit == Unit.w) {
-//       for(int i=0;i<sp.length;i++){
-//         sp[i] = sp[i];
-//       }
-//     }
-//     else if(unit == Unit.photon) {
-
-//       for(int i=0;i<sp.length;i++){
-//         sp[i] = sp[i] * wl[i] * 5.03E+15;
-//       }
-//     }
-//     else if(unit == Unit.mol) {
-//       for(int i=0;i<sp.length;i++){
-//         sp[i] = sp[i] * wl[i] / 0.1237 * 10E-3;
-//       }
-//     }
-//     var pp = sp.reduce(max);
-//     var pwl = wl[sp.indexWhere((x) => (x == pp))];
-//     var ir = 0.0;
-//     final l1 = settings.sumRangeMin;
-//     final l2 = settings.sumRangeMax;
-//     for(var i=0; i<wl.length; i++) {
-//       if(wl[i] >= l1 && wl[i] <= l2){
-//         ir += sp[i];
-//       }
-//     }
-
-//     report.sp = sp;
-//     report.wl = wl;
-//     report.ir = ir;
-//     report.pp = pp;
-//     report.pwl = pwl;
-//     report.wlRangeMin = l1;
-//     report.wlRangeMax = l2;
-//     report.unit = unitMap[unit]!;
-
-//     return report;
-//   }
-// }
-
-//
 class UVVisSpecDeviceResult {
   List<double> sp = [];
   List<double> wl = [];
@@ -124,10 +53,6 @@ class UvVisSpecDevice {
   bool _measuring = false;
 
   Future<void> initialize() async {
-    // _spectralDataRaw = List.generate(UVMINISPEC_SENSOR_NUM, (index) => 0.0);
-    // _spectralWlRaw = List.generate(UVMINISPEC_SENSOR_NUM, (index) => 0.0);
-    // _darkRaw = List.generate(UVMINISPEC_SENSOR_NUM, (index) => 0.0);
-    // _spectralIntensityRaw = List.generate(UVMINISPEC_SENSOR_NUM, (index) => 1.0);
 
     UsbSerial.usbEventStream!.listen((UsbEvent event) async {
       if (event.event == UsbEvent.ACTION_USB_ATTACHED) {
@@ -164,7 +89,7 @@ class UvVisSpecDevice {
   }
 
   Future<void> measStart() async {
-    _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 200), (timer) {
       if (_measuring) {
         return;
       }
@@ -193,9 +118,6 @@ class UvVisSpecDevice {
   }
 
   Future<void> meas() async {
-    //var wl = _spectralWlRaw;
-    //var wl = List.generate(UVMINISPEC_SENSOR_NUM, (index) => 0.0);
-    //var p = List.generate(UVMINISPEC_SENSOR_NUM, (index) => 0.0);
 
     try {
       var res = await _transaction?.transaction(_port!,
@@ -215,8 +137,6 @@ class UvVisSpecDevice {
           p[i] = 0.0;
         }
       }
-
-      //_spectralDataRaw = p;
 
       var r = _correct(wl, p);
       var wl2 = r[0];
@@ -252,8 +172,7 @@ class UvVisSpecDevice {
         const AsciiEncoder().convert('ST?\n'), const Duration(seconds: 60));
     var v = res?.split('/')[1].split(':');
     if (v != null) {
-      var status = v[0]; //int.parse(v[0]);
-      //var temperature = double.parse(v[1]);
+      var status = v[0];
       _status.devicewarn = status == "W" ? true : false;
       _status.deviceerror = status == "E" ? true : false;
       _statusSubject.add(_status);
@@ -331,37 +250,9 @@ class UvVisSpecDevice {
     _transaction = Transaction.stringTerminated(
         (_port!.inputStream) as Stream<Uint8List>, Uint8List.fromList([10]));
 
-    // var res2 = await _transaction?.transaction(_port!, const AsciiEncoder().convert('WCCF\n'), const Duration(seconds: 1));
-    // var v = res2?.split('/')[1].split(':');
-    // var a0 = [0.0,0.0,0.0,0.0,0.0,0.0];
-    // var wl = List.generate(UVMINISPEC_SENSOR_NUM, (index) => 0.0);
-    // var p = List.generate(UVMINISPEC_SENSOR_NUM, (index) => 0.0);
-    // var si = List.generate(UVMINISPEC_SENSOR_NUM, (index) => 0.0);
-
-    // a0[0] = double.parse(v![0]);
-    // a0[1] = double.parse(v[1]);
-    // a0[2] = double.parse(v[2]);
-    // a0[3] = double.parse(v[3]);
-    // a0[4] = double.parse(v[4]);
-    // a0[5] = double.parse(v[5]);
-
-    // for(var i=0;i<UVMINISPEC_SENSOR_NUM;i++)
-    // {
-    //   int i1 = i+1;
-    //   wl[i] = a0[0] + a0[1] * i1 + a0[2] * i1 * i1 + a0[3] * i1 * i1 * i1 + a0[4] * i1 * i1 * i1 * i1 + a0[5] * i1 * i1 * i1 * i1 * i1;
-    // }
-
-    // var res4 = await _transaction?.transaction(_port!, const AsciiEncoder().convert('SICF\n'), const Duration(seconds: 1));
-    // var sis = res4?.split('\r');
-    // for(var i=0;i<UVMINISPEC_SENSOR_NUM;i++) {
-    //   si[i] = double.parse(sis![i]);
-    // }
-
+    
     var res5 = await _transaction?.transaction(_port!,
         const AsciiEncoder().convert('EXP/AUTO\n'), const Duration(seconds: 1));
-
-    // _spectralIntensityRaw = si;
-    // _spectralWlRaw = wl;
 
     _status.connected = true;
     _statusSubject.add(_status);
@@ -381,11 +272,16 @@ class UvVisSpecDevice {
       sp2[i] = _interporateLinear(wl2[i], wl, sp);
       //sp2[i] = _interporateSpline(wl2[i], wl, sp, z);
       //sp2[i] = _interporateLagrange(wl2[i], wl, sp);
-      if (sp2[i] < 0.0) {
+      // if (sp2[i] < 0.0) {
+      //   sp2[i] = 0.0;
+      // }
+    }
+    for (var i = 2; i < len-2; i++) {
+      sp2[i] = (sp2[i-2] * (-3) + sp2[i-1] * 12 + sp2[i] * 17 + sp2[i+1] * 12 + sp2[i+2] * (-3)) / 35;
+      if(sp2[i] < 0.0) {
         sp2[i] = 0.0;
       }
     }
-
     return [wl2, sp2];
   }
 
@@ -450,6 +346,10 @@ class UvVisSpecDevice {
     var t1 = 1;
     var len = src1.length;
 
+    if(v < src1[0]) {
+      return 0.0;
+    }
+
     for (var i = 1; i < len; i++) {
       x = src1[i];
       if (x > v) {
@@ -477,6 +377,11 @@ class UvVisSpecDevice {
   double _interporateLagrange(double x, List<double> v1, List<double> v2) {
     var t1 = 1;
     var n = 2;
+    
+    if(x < v1[0]) {
+      return 0.0;
+    }
+
     for (var i = 2; i < v1.length - 1; i++) {
       t1 = i;
       if (v1[i] > x) {

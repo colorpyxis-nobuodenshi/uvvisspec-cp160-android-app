@@ -6,7 +6,7 @@ import 'uvvisspec.dart';
 
 class Settings {
   Unit unit = Unit.w;
-  FilterSpectralIntensityType type = FilterSpectralIntensityType.None;
+  FilterSpectralIntensityType filter = FilterSpectralIntensityType.None;
   double sumRangeMin = 310;
   double sumRangeMax = 800;
   String deviceExposureTime = "AUTO";
@@ -14,9 +14,10 @@ class Settings {
   IntegrateLigthIntensityRange integrateLigthIntensityRange = IntegrateLigthIntensityRange.all;
 }
 
-enum FilterSpectralIntensityType { Azamiuma, Hachi, Ga350, Ga550, Ga350550, Y, None }
+enum FilterSpectralIntensityType { AllInsects, Azamiuma, Hachi, Ga350, Ga550, Ga350550, Y, None }
 
 Map<FilterSpectralIntensityType, String> filterNameMap = {
+  FilterSpectralIntensityType.AllInsects: "UV誘因光",
   FilterSpectralIntensityType.Azamiuma: "アザミウマ",
   FilterSpectralIntensityType.Hachi: "ハチ",
   FilterSpectralIntensityType.Ga350: "ガ(350)",
@@ -37,7 +38,7 @@ class ResultReport {
   MeasureMode mode = MeasureMode.irradiance;
   String measureDatetime = "";
   FilterSpectralIntensityType isi = FilterSpectralIntensityType.Azamiuma;
-  String insectsName = "";
+  String filterName = "";
 }
 
 class ResultConverter {
@@ -58,6 +59,7 @@ class ResultConverter {
     var isil4 = <double>[];
     var isil5 = <double>[];
     var isil6 = <double>[];
+    var isil7 = <double>[];
 
     var lines = loadedData.split('\n');
     for(var i=1;i<lines.length;i++){
@@ -69,14 +71,16 @@ class ResultConverter {
       isil4.add(double.parse(v[4]));
       isil5.add(double.parse(v[5]));
       isil6.add(double.parse(v[6]));
+      isil7.add(double.parse(v[7]));
     }
     var map = HashMap<FilterSpectralIntensityType, List<double>>();
-    map[FilterSpectralIntensityType.Azamiuma] = isil1;
-    map[FilterSpectralIntensityType.Hachi] = isil2;
-    map[FilterSpectralIntensityType.Ga350] = isil3;
-    map[FilterSpectralIntensityType.Ga550] = isil4;
-    map[FilterSpectralIntensityType.Ga350550] = isil5;
-    map[FilterSpectralIntensityType.Y] = isil6;
+    map[FilterSpectralIntensityType.AllInsects] = isil1;
+    map[FilterSpectralIntensityType.Azamiuma] = isil2;
+    map[FilterSpectralIntensityType.Hachi] = isil3;
+    map[FilterSpectralIntensityType.Ga350] = isil4;
+    map[FilterSpectralIntensityType.Ga550] = isil5;
+    map[FilterSpectralIntensityType.Ga350550] = isil6;
+    map[FilterSpectralIntensityType.Y] = isil7;
 
     return map;
   }
@@ -101,7 +105,7 @@ class ResultConverter {
     }
     else
     {
-      final l = _map[settings.type];
+      final l = _map[settings.filter];
       if(l != null) {
         for(var i=0;i<p1.length;i++)
         {
@@ -145,7 +149,7 @@ class ResultConverter {
     res.ir = ir;
     res.pp = pp;
     res.pwl = pwl;
-    res.insectsName = filterNameMap[settings.type]!;
+    res.filterName = filterNameMap[settings.filter]!;
     //res.unit = unit;
     res.mode = mode;
     return  res;

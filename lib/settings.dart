@@ -17,7 +17,7 @@ class SettingsPage extends StatefulWidget {
 
 class SettingsPageState extends State<SettingsPage> {
   var _unitSel = Unit.w;
-  var _typeSel = FilterSpectralIntensityType.None;
+  var _filterSel = FilterSpectralIntensityType.None;
   var _wlSumMin = "";
   var _wlSumMax = "";
   var _wlRangeValues = const RangeValues(0.31, 0.8);
@@ -40,7 +40,7 @@ class SettingsPageState extends State<SettingsPage> {
         settings.sumRangeMin / 1000.0, settings.sumRangeMax / 1000.0);
     setState(() {
       _unitSel = settings.unit;
-      _typeSel = settings.type;
+      _filterSel = settings.filter;
       _exposuretime = settings.deviceExposureTime;
       _measureModeSel = settings.measureMode;
       _integrateRangeSel = settings.integrateLigthIntensityRange;
@@ -62,7 +62,7 @@ class SettingsPageState extends State<SettingsPage> {
         s.sumRangeMin = double.parse(_wlSumMin);
         s.sumRangeMax = double.parse(_wlSumMax);
         s.deviceExposureTime = _exposuretime;
-        s.type = _typeSel;
+        s.filter = _filterSel;
         s.measureMode = _measureModeSel;
         s.integrateLigthIntensityRange = _integrateRangeSel;
         Navigator.of(context).pop(s);
@@ -96,7 +96,7 @@ class SettingsPageState extends State<SettingsPage> {
                                   setState(() {
                                     _measureModeSel = MeasureMode.irradiance;
                                     _unitSel = Unit.w;
-                                    _typeSel =
+                                    _filterSel =
                                         FilterSpectralIntensityType.None;
                                   })
                                 }),
@@ -119,7 +119,7 @@ class SettingsPageState extends State<SettingsPage> {
                                   setState(() {
                                     _measureModeSel = MeasureMode.ppfd;
                                     _unitSel = Unit.mol;
-                                    _typeSel =
+                                    _filterSel =
                                         FilterSpectralIntensityType.None;
                                   })
                                 }),
@@ -380,20 +380,31 @@ class SettingsPageState extends State<SettingsPage> {
                           RadioListTile(
                               title: const Text("なし"),
                               value: FilterSpectralIntensityType.None,
-                              groupValue: _typeSel,
+                              groupValue: _filterSel,
                               onChanged: (value) => {
                                     setState(() => {
-                                          _typeSel =
+                                          _filterSel =
                                               FilterSpectralIntensityType.None
+                                        })
+                                  }),
+                          RadioListTile(
+                              title: const Text("UV誘因光"),
+                              value: FilterSpectralIntensityType.AllInsects,
+                              groupValue: _filterSel,
+                              onChanged: (value) => {
+                                    setState(() => {
+                                          _filterSel =
+                                              FilterSpectralIntensityType
+                                                  .AllInsects
                                         })
                                   }),
                           RadioListTile(
                               title: const Text("アザミウマ"),
                               value: FilterSpectralIntensityType.Azamiuma,
-                              groupValue: _typeSel,
+                              groupValue: _filterSel,
                               onChanged: (value) => {
                                     setState(() => {
-                                          _typeSel =
+                                          _filterSel =
                                               FilterSpectralIntensityType
                                                   .Azamiuma
                                         })
@@ -401,40 +412,40 @@ class SettingsPageState extends State<SettingsPage> {
                           RadioListTile(
                               title: const Text("ハチ"),
                               value: FilterSpectralIntensityType.Hachi,
-                              groupValue: _typeSel,
+                              groupValue: _filterSel,
                               onChanged: (value) => {
                                     setState(() => {
-                                          _typeSel =
+                                          _filterSel =
                                               FilterSpectralIntensityType.Hachi
                                         })
                                   }),
                           RadioListTile(
                               title: const Text("ガ(350)"),
                               value: FilterSpectralIntensityType.Ga350,
-                              groupValue: _typeSel,
+                              groupValue: _filterSel,
                               onChanged: (value) => {
                                     setState(() => {
-                                          _typeSel =
+                                          _filterSel =
                                               FilterSpectralIntensityType.Ga350
                                         })
                                   }),
                           RadioListTile(
                               title: const Text("ガ(550)"),
                               value: FilterSpectralIntensityType.Ga550,
-                              groupValue: _typeSel,
+                              groupValue: _filterSel,
                               onChanged: (value) => {
                                     setState(() => {
-                                          _typeSel =
+                                          _filterSel =
                                               FilterSpectralIntensityType.Ga550
                                         })
                                   }),
                           RadioListTile(
                               title: const Text("ガ(350+550)"),
                               value: FilterSpectralIntensityType.Ga350550,
-                              groupValue: _typeSel,
+                              groupValue: _filterSel,
                               onChanged: (value) => {
                                     setState(() => {
-                                          _typeSel =
+                                          _filterSel =
                                               FilterSpectralIntensityType
                                                   .Ga350550
                                         })
@@ -442,10 +453,10 @@ class SettingsPageState extends State<SettingsPage> {
                           RadioListTile(
                               title: const Text("視感度"),
                               value: FilterSpectralIntensityType.Y,
-                              groupValue: _typeSel,
+                              groupValue: _filterSel,
                               onChanged: (value) => {
                                     setState(() => {
-                                          _typeSel =
+                                          _filterSel =
                                               FilterSpectralIntensityType.Y
                                         })
                                   }),

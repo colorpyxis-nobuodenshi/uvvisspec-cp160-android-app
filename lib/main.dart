@@ -219,7 +219,7 @@ class HomeState extends State<Home> {
                         children: <Widget>[
                           Visibility(
                               child: Text(
-                                filterNameMap[_settings.type].toString(),
+                                filterNameMap[_settings.filter].toString(),
                                 style: const TextStyle(fontSize: 16),
                               ),
                               visible: _settings.measureMode ==
