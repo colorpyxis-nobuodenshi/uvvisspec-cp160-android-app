@@ -51,6 +51,7 @@ class HomeState extends State<Home> {
   var _showWarning = true;
   var _measuring = false;
   var _connected = false;
+  var _timer;
 
   @override
   void initState() {
@@ -113,17 +114,14 @@ class HomeState extends State<Home> {
       });
     });
 
-    Future(() async {
-      await device.initialize();
-      //await device.measStart();
-    });
+    device.initialize();
   }
 
   @override
   void dispose() {
     super.dispose();
     Future(() async {
-      //await device.measStop();
+      await device.measStop();
       await device.deinitialize();
     });
     SystemNavigator.pop();
