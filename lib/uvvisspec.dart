@@ -41,12 +41,6 @@ class UvVisSpecDevice {
   Transaction<String>? _transaction;
   Timer? _timer;
 
-  // static int UVMINISPEC_SENSOR_NUM = 288;
-  // late List<double> _spectralDataRaw;
-  // late List<double> _spectralWlRaw;
-  // late List<double> _darkRaw;
-  // late List<double> _spectralIntensityRaw;
-
   var _status = UVVisSpecDeviceStatus();
   final _resultSubject = PublishSubject<UVVisSpecDeviceResult>();
   final _statusSubject = PublishSubject<UVVisSpecDeviceStatus>();
