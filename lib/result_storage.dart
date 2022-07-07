@@ -19,7 +19,11 @@ class ResultStorage {
       final mdt = result.measureDatetime;
       final pp = result.pp;
       final pw = result.pwl;
-      final unit = result.mode == MeasureMode.irradiance ? "放射照度[W・m^-2]" : result.mode == MeasureMode.insectsIrradiance ? "光量子束密度[photons・m^-2・S^-1]" : "光量子束密度[μmol・m^-2・S^-1]";
+      final unit = result.mode == MeasureMode.irradiance
+          ? "放射照度[W・m^-2]"
+          : result.mode == MeasureMode.insectsIrradiance
+              ? "光量子束密度[photons・m^-2・S^-1]"
+              : "光量子束密度[μmol・m^-2・S^-1]";
       var name = result.filterName;
       await file.writeAsString('測定日, $mdt\r\n', mode: FileMode.append);
       if (result.filterName != "") {
