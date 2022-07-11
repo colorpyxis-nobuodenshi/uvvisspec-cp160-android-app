@@ -77,7 +77,7 @@ class HomeState extends State<Home> {
           ),
         );
 
-        await Future.delayed(const Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 5));
         Navigator.of(context).pop();
         SystemNavigator.pop();
       }
@@ -113,7 +113,7 @@ class HomeState extends State<Home> {
         _peekPower = pp1;
       });
     });
-
+    
     device.initialize();
   }
 
@@ -135,6 +135,8 @@ class HomeState extends State<Home> {
         integratedLightIntensityLabel = "放射照度";
         break;
       case MeasureMode.insectsIrradiance:
+        integratedLightIntensityLabel = "光子数密度";
+        break;
       case MeasureMode.ppfd:
         integratedLightIntensityLabel = "光量子束密度";
         break;

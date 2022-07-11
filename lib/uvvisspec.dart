@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:usb_serial/usb_serial.dart';
 import 'package:usb_serial/transaction.dart';
@@ -83,7 +84,7 @@ class UvVisSpecDevice {
   }
 
   Future<void> measStart() async {
-    _timer = Timer.periodic(const Duration(milliseconds: 200), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 200), (timer) async {
       if (_measuring) {
         return;
       }
@@ -93,10 +94,9 @@ class UvVisSpecDevice {
       }
       if (_status.measurestarted) {
         _measuring = true;
-        meas().then((value) {
-          status();
-          _measuring = false;
-        });
+        await meas();
+        await status();
+        _measuring = false;
       }
     });
 
@@ -117,6 +117,8 @@ class UvVisSpecDevice {
       var res = await _transaction?.transaction(_port!,
           const AsciiEncoder().convert('MEAS\n'), const Duration(seconds: 60));
       if (res == null) {
+        _status.detached = true;
+        _statusSubject.add(_status);
         return;
       }
       var values = res.split('\r');
@@ -246,7 +248,7 @@ class UvVisSpecDevice {
 
     
     var res5 = await _transaction?.transaction(_port!,
-        const AsciiEncoder().convert('EXP/AUTO\n'), const Duration(seconds: 1));
+        const AsciiEncoder().convert('EXP/AUTO\n'), const Duration(seconds: 60));
 
     _status.connected = true;
     _statusSubject.add(_status);
