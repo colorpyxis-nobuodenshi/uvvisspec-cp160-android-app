@@ -420,7 +420,7 @@ class SettingsPageState extends State<SettingsPage> {
                                         })
                                   }),
                           RadioListTile(
-                              title: const Text("ガ(350)"),
+                              title: const Text("ガ全般"),
                               value: FilterSpectralIntensityType.Ga350,
                               groupValue: _filterSel,
                               onChanged: (value) => {
@@ -430,7 +430,7 @@ class SettingsPageState extends State<SettingsPage> {
                                         })
                                   }),
                           RadioListTile(
-                              title: const Text("ガ(550)"),
+                              title: const Text("タバコスズメガ、ヒトリガ、オオタバコガ、コナガ"),
                               value: FilterSpectralIntensityType.Ga550,
                               groupValue: _filterSel,
                               onChanged: (value) => {
@@ -440,7 +440,7 @@ class SettingsPageState extends State<SettingsPage> {
                                         })
                                   }),
                           RadioListTile(
-                              title: const Text("ガ(350+550)"),
+                              title: const Text("ハスモンヨトウ"),
                               value: FilterSpectralIntensityType.Ga350550,
                               groupValue: _filterSel,
                               onChanged: (value) => {

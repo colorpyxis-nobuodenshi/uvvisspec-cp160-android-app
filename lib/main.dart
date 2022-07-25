@@ -220,7 +220,7 @@ class HomeState extends State<Home> {
                           Visibility(
                               child: Text(
                                 filterNameMap[_settings.filter].toString(),
-                                style: const TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 14),
                               ),
                               visible: _settings.measureMode ==
                                   MeasureMode.insectsIrradiance),

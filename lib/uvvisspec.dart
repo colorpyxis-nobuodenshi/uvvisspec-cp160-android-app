@@ -83,6 +83,9 @@ class UvVisSpecDevice {
   }
 
   Future<void> measStart() async {
+    if(_status.connected == false) {
+      return;
+    }
     _timer = Timer.periodic(const Duration(milliseconds: 200), (timer) async {
       if (_measuring) {
         return;
