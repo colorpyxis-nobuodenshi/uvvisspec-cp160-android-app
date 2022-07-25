@@ -113,7 +113,7 @@ class HomeState extends State<Home> {
         _peekPower = pp1;
       });
     });
-    
+
     device.initialize();
   }
 
@@ -229,7 +229,11 @@ class HomeState extends State<Home> {
                             style: const TextStyle(fontSize: 16),
                           ),
                           Text(
-                            _irradiance.toStringAsExponential(3),
+                            _irradiance * 1000 < 1
+                                ? _irradiance.toStringAsExponential(3)
+                                : _irradiance > 1000
+                                    ? _irradiance.toStringAsExponential(3)
+                                    : _irradiance.toStringAsPrecision(4),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 34,
@@ -255,7 +259,11 @@ class HomeState extends State<Home> {
                             ),
                           ),
                           Text(
-                            _peekPower.toStringAsExponential(3),
+                            _peekPower * 1000 < 1
+                                ? _peekPower.toStringAsExponential(3)
+                                : _peekPower > 1000
+                                    ? _peekPower.toStringAsExponential(3)
+                                    : _peekPower.toStringAsPrecision(4),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 26,
