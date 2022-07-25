@@ -30,9 +30,9 @@ Map<FilterSpectralIntensityType, String> filterNameMap = {
   FilterSpectralIntensityType.AllInsects: "UV誘因光",
   FilterSpectralIntensityType.Azamiuma: "アザミウマ",
   FilterSpectralIntensityType.Hachi: "ハチ",
-  FilterSpectralIntensityType.Ga350: "ガ(350)",
-  FilterSpectralIntensityType.Ga550: "ガ(550)",
-  FilterSpectralIntensityType.Ga350550: "ガ(350+550)",
+  FilterSpectralIntensityType.Ga350: "ガ全般",
+  FilterSpectralIntensityType.Ga550: "タバコスズメガ、ヒトリガ、オオタバコガ、コナガ",
+  FilterSpectralIntensityType.Ga350550: "ハスモンヨトウ",
   FilterSpectralIntensityType.None: "",
   FilterSpectralIntensityType.Y: "視感度",
 };
