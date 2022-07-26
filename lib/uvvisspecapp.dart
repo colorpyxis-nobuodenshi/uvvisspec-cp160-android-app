@@ -27,7 +27,7 @@ enum FilterSpectralIntensityType {
 }
 
 Map<FilterSpectralIntensityType, String> filterNameMap = {
-  FilterSpectralIntensityType.AllInsects: "UV誘因光",
+  FilterSpectralIntensityType.AllInsects: "UV誘引光",
   FilterSpectralIntensityType.Azamiuma: "アザミウマ",
   FilterSpectralIntensityType.Hachi: "ハチ",
   FilterSpectralIntensityType.Ga350: "ガ全般",

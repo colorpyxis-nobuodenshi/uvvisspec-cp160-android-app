@@ -388,7 +388,7 @@ class SettingsPageState extends State<SettingsPage> {
                                         })
                                   }),
                           RadioListTile(
-                              title: const Text("UV誘因光"),
+                              title: const Text("UV誘引光"),
                               value: FilterSpectralIntensityType.AllInsects,
                               groupValue: _filterSel,
                               onChanged: (value) => {
