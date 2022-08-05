@@ -267,9 +267,9 @@ class UvVisSpecDevice {
     //var sp3 = List.generate(len, (index) => 0.0);
     //var z = _makeSplineTable(wl, sp);
     for (var i = 0; i < len; i++) {
-      sp2[i] = _interporateLinear(wl2[i], wl, sp);
+      //sp2[i] = _interporateLinear(wl2[i], wl, sp);
       //sp2[i] = _interporateSpline(wl2[i], wl, sp, z);
-      //sp2[i] = _interporateLagrange(wl2[i], wl, sp);
+      sp2[i] = _interporateLagrange(wl2[i], wl, sp);
       // if (sp2[i] < 0.0) {
       //   sp2[i] = 0.0;
       // }
@@ -334,7 +334,7 @@ class UvVisSpecDevice {
         y[i];
   }
 
-  double _interporateLinear(double v, List<double> src1, List<double> src2) {
+  double _interporateLinear(double v, List<double> v1, List<double> v2) {
     var x1 = 0.0;
     var x2 = 0.0;
     var y1 = 0.0;
@@ -342,14 +342,14 @@ class UvVisSpecDevice {
     var x = 0.0;
     var t2 = 1;
     var t1 = 1;
-    var len = src1.length;
+    var len = v1.length;
 
-    if(v < src1[0]) {
-      return 0.0;
+    if(v < v1[0]) {
+      return v2[0];
     }
 
     for (var i = 1; i < len; i++) {
-      x = src1[i];
+      x = v1[i];
       if (x > v) {
         t2 = i;
         x2 = x;
@@ -358,10 +358,10 @@ class UvVisSpecDevice {
     }
     t1 = t2 - 1;
 
-    x1 = src1[t1];
+    x1 = v1[t1];
 
-    y1 = src2[t1];
-    y2 = src2[t2];
+    y1 = v2[t1];
+    y2 = v2[t2];
 
     var value = (x2 - x1) == 0.0 ? 0.0 : y1 + (y2 - y1) * (v - x1) / (x2 - x1);
 
@@ -373,11 +373,11 @@ class UvVisSpecDevice {
   }
 
   double _interporateLagrange(double x, List<double> v1, List<double> v2) {
-    var t1 = 1;
-    var n = 2;
+    var t1 = 2;
+    //var n = 2;
     
     if(x < v1[0]) {
-      return 0.0;
+      return v2[0];
     }
 
     for (var i = 2; i < v1.length - 1; i++) {
