@@ -27,6 +27,7 @@ class UVVisSpecDeviceResult {
 }
 
 class UVVisSpecDeviceStatus {
+  bool attached = false;
   bool detached = false;
   bool connected = false;
   bool measurestarted = false;
@@ -50,6 +51,8 @@ class UvVisSpecDevice {
 
     UsbSerial.usbEventStream!.listen((UsbEvent event) async {
       if (event.event == UsbEvent.ACTION_USB_ATTACHED) {
+        _status.attached = true;
+        _status.detached = false;
         _statusSubject.add(_status);
         var devices = await UsbSerial.listDevices();
         for (var device in devices) {
@@ -63,6 +66,7 @@ class UvVisSpecDevice {
         await measStop();
         await _connectTo(null);
         _status.detached = true;
+        _status.attached = false;
         _statusSubject.add(_status);
       }
     });
