@@ -274,16 +274,16 @@ class UvVisSpecDevice {
       //sp2[i] = _interporateLinear(wl2[i], wl, sp);
       //sp2[i] = _interporateSpline(wl2[i], wl, sp, z);
       sp2[i] = _interporateLagrange(wl2[i], wl, sp);
-      if (sp2[i] < 0.0) {
+      // if (sp2[i] < 0.0) {
+      //   sp2[i] = 0.0;
+      // }
+    }
+    for (var i = 2; i < len-2; i++) {
+      sp2[i] = (sp2[i-2] * (-3) + sp2[i-1] * 12 + sp2[i] * 17 + sp2[i+1] * 12 + sp2[i+2] * (-3)) / 35;
+      if(sp2[i] < 0.0) {
         sp2[i] = 0.0;
       }
     }
-    // for (var i = 2; i < len-2; i++) {
-    //   sp2[i] = (sp2[i-2] * (-3) + sp2[i-1] * 12 + sp2[i] * 17 + sp2[i+1] * 12 + sp2[i+2] * (-3)) / 35;
-    //   if(sp2[i] < 0.0) {
-    //     sp2[i] = 0.0;
-    //   }
-    // }
     return [wl2, sp2];
   }
 
@@ -405,7 +405,7 @@ class UvVisSpecDevice {
       s += p;
     }
     if (s < 0) {
-      s == 0.0;
+      s = 0.0;
     }
     return s;
   }
