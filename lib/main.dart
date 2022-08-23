@@ -129,6 +129,8 @@ class HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     var integratedLightIntensityLabel = "放射照度";
     switch (_settings.measureMode) {
       case MeasureMode.irradiance:
@@ -201,8 +203,8 @@ class HomeState extends State<Home> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   SizedBox(
-                      width: 700,
-                      height: 260,
+                      width: width,
+                      height: height / 100 * 30,
                       child: Card(
                         child: SpectralLineChart.create(
                             _spectralWl,
@@ -211,8 +213,8 @@ class HomeState extends State<Home> {
                             _settings.sumRangeMax),
                       )),
                   SizedBox(
-                    height: 120,
-                    width: 700,
+                    height: height / 100 * 15,
+                    width: width,
                     child: Card(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -246,8 +248,8 @@ class HomeState extends State<Home> {
                     ),
                   ),
                   SizedBox(
-                    height: 120,
-                    width: 700,
+                    height: height / 100 * 13,
+                    width: width,
                     child: Card(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -277,8 +279,8 @@ class HomeState extends State<Home> {
                     ),
                   ),
                   SizedBox(
-                    height: 120,
-                    width: 700,
+                    height: height / 100 * 13,
+                    width: width,
                     child: Card(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
