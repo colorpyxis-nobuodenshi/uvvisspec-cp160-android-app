@@ -202,7 +202,7 @@ class HomeState extends State<Home> {
                 children: <Widget>[
                   SizedBox(
                       width: 700,
-                      height: 250,
+                      height: 260,
                       child: Card(
                         child: SpectralLineChart.create(
                             _spectralWl,
@@ -246,7 +246,7 @@ class HomeState extends State<Home> {
                     ),
                   ),
                   SizedBox(
-                    height: 86,
+                    height: 120,
                     width: 700,
                     child: Card(
                       child: Column(
@@ -266,7 +266,7 @@ class HomeState extends State<Home> {
                                     : _peekPower.toStringAsPrecision(4),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 26,
+                              fontSize: 30,
                               color: Colors.blue.shade600,
                             ),
                           ),
@@ -277,7 +277,7 @@ class HomeState extends State<Home> {
                     ),
                   ),
                   SizedBox(
-                    height: 85,
+                    height: 120,
                     width: 700,
                     child: Card(
                       child: Column(
@@ -293,7 +293,7 @@ class HomeState extends State<Home> {
                             _peekWavelength.toStringAsFixed(0),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 28,
+                              fontSize: 30,
                               color: Colors.blue.shade600,
                             ),
                           ),
