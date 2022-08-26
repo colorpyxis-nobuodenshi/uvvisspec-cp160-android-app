@@ -378,7 +378,6 @@ class UvVisSpecDevice {
 
   double _interporateLagrange(double x, List<double> v1, List<double> v2) {
     var t1 = 2;
-    //var n = 2;
     
     if(x < v1[0]) {
       return v2[0];

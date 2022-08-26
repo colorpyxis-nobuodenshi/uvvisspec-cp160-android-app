@@ -231,7 +231,8 @@ class HomeState extends State<Home> {
                             style: const TextStyle(fontSize: 16),
                           ),
                           Text(
-                            _irradiance * 1000 < 1
+                            _irradiance == 0 ? "0"
+                                :_irradiance * 1000 < 1
                                 ? _irradiance.toStringAsExponential(3)
                                 : _irradiance > 1000
                                     ? _irradiance.toStringAsExponential(3)
@@ -261,7 +262,8 @@ class HomeState extends State<Home> {
                             ),
                           ),
                           Text(
-                            _peekPower * 1000 < 1
+                            _peekPower == 0 ? "0"
+                                : _peekPower * 1000 < 1
                                 ? _peekPower.toStringAsExponential(3)
                                 : _peekPower > 1000
                                     ? _peekPower.toStringAsExponential(3)
