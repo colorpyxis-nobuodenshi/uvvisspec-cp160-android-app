@@ -111,31 +111,21 @@ class SettingsPageState extends State<SettingsPage> {
                                     _unitSel = Unit.photon;
                                   })
                                 }),
-                        RadioListTile(
-                            title: const Text("PPFD"),
-                            value: MeasureMode.ppfd,
-                            groupValue: _measureModeSel,
-                            onChanged: (value) => {
-                                  setState(() {
-                                    _measureModeSel = MeasureMode.ppfd;
-                                    _unitSel = Unit.mol;
-                                    _filterSel =
-                                        FilterSpectralIntensityType.None;
-                                  })
-                                }),
+                        // RadioListTile(
+                        //     title: const Text("PPFD"),
+                        //     value: MeasureMode.ppfd,
+                        //     groupValue: _measureModeSel,
+                        //     onChanged: (value) => {
+                        //           setState(() {
+                        //             _measureModeSel = MeasureMode.ppfd;
+                        //             _unitSel = Unit.mol;
+                        //             _filterSel =
+                        //                 FilterSpectralIntensityType.None;
+                        //           })
+                        //         }),
                       ],
                     ),
                   ),
-                  // Card(
-                  //   child: Column(
-                  //   children: <Widget>[
-                  //     const Text("測定単位"),
-                  // RadioListTile(title: const Text("放射照度　(W/m2)"), value: Unit.w, groupValue: _unitSel, onChanged: (value) => { setState(()=>{_unitSel = Unit.w })}),
-                  // RadioListTile(title: const Text("光量子束密度　(photons/m2/s)"), value: Unit.photon, groupValue: _unitSel, onChanged: (value) => { setState(()=>{_unitSel = Unit.photon })}),
-                  // RadioListTile(title: const Text("光量子束密度　(umol/m2/s)"), value: Unit.mol, groupValue: _unitSel, onChanged: (value) => { setState(()=>{_unitSel = Unit.mol })}),
-                  //   ],
-                  // ),
-                  // ),
                   Card(
                     child: Column(
                       children: <Widget>[
