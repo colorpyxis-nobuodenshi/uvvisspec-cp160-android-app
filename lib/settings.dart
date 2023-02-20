@@ -151,7 +151,7 @@ class SettingsPageState extends State<SettingsPage> {
                               },
                             ),
                             RadioListTile(
-                              title: const Text("400-700nm (VIS・PAR・PPFD)"),
+                              title: const Text("400-700nm (VIS)"),
                               value: IntegrateLigthIntensityRange.vis,
                               groupValue: _integrateRangeSel,
                               onChanged: (value) {
