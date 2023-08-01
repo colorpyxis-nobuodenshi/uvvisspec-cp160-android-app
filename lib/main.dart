@@ -46,7 +46,7 @@ class HomeState extends State<Home> {
 
   late List<double> _spectralData = List.generate(50, (index) => 1.0);
   late List<double> _spectralWl = List.generate(50, (index) => 0.0);
-  late ResultReport _currentResult;
+  late ResultReport _currentResult = ResultReport();
   var _settings = Settings();
   var _showWarning = true;
   var _measuring = false;
