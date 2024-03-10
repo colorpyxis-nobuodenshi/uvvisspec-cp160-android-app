@@ -19,16 +19,16 @@ class ResultStorage {
       final pp = result.pp;
       final pw = result.pwl;
       final unit = result.mode == MeasureMode.irradiance
-          ? "放射照度[W・m^-2]"
+          ? "\uFEFF放射照度[W・m^-2]"
           : result.mode == MeasureMode.insectsIrradiance
-              ? "光子数密度[photons・m^-2・S^-1]"
-              : "光量子束密度[μmol・m^-2・S^-1]";
+              ? "\uFEFF光子数密度[photons・m^-2・S^-1]"
+              : "\uFEFF光量子束密度[μmol・m^-2・S^-1]";
       var name = result.filterName;
-      await file.writeAsString('測定日, $mdt\r\n', mode: FileMode.append);
+      await file.writeAsString('\uFEFF測定日, $mdt\r\n', mode: FileMode.append);
       if (result.filterName != "") {
-        await file.writeAsString('昆虫タイプ, $name\r\n', mode: FileMode.append);
+        await file.writeAsString('\uFEFF昆虫タイプ, $name\r\n', mode: FileMode.append);
       }
-      await file.writeAsString('波長[nm], $unit\r\n', mode: FileMode.append);
+      await file.writeAsString('\uFEFF波長[nm], $unit\r\n', mode: FileMode.append);
       for (var i = 0; i < len; i++) {
         final v1 = wl[i];
         final v2 = sp[i];
